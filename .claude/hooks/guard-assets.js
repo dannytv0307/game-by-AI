@@ -10,8 +10,8 @@ process.stdin.on("end", () => {
   if (!file) process.exit(0);
 
   const rules = [
-    [/\/DevilBlade\/Assets\/(Art|ArtHD|Audio)\//i,
-      "Asset đồ họa/âm thanh phải đi qua asset-pipeline (manifest → gen → approve), không ghi tay vào Assets/Art, ArtHD, Audio."],
+    [/\/DevilBlade\/Assets\/(ArtHD|Audio)\//i,
+      "Asset đồ họa/âm thanh phải đi qua asset-pipeline (manifest → gen → approve), không ghi tay vào Assets/ArtHD, Audio."],
     [/\/DevilBlade\/Assets\/Scenes\/Level1(_HD)?\.unity$/i,
       "Scene được dựng bằng code: sửa LEVEL DATA trong Assets/Editor/LevelBuilder/Level1Builder.cs rồi chạy Level1Builder.BuildHeadless."],
     [/\/DevilBlade\/Packages\/manifest\.json$/i,

@@ -9,11 +9,10 @@ argument-hint: "[phạm vi, ví dụ: 'chỉ màn 2' hoặc để trống để 
 ## Bước 1. Thu thập
 - `docs/design/story.md` (bắt buộc; chưa có thì bảo người dùng chạy `/story` trước).
 - `docs/design/characters/*.md`, `docs/design/zones/*.md` (concept, từ `/concept`). Nhân vật/vùng đất chưa có concept thì tạo task loại `story` "concept <id>" đứng trước task anchor của nó.
-- Hiện trạng: `CLAUDE.md`, `Assets/Editor/LevelBuilder/Level1Builder.cs` (màn đã có, hệ Skin Pixel/HD), `Assets/Scripts/` (cơ chế đã có), `asset-pipeline/manifest.yaml` + `pipeline status` (asset đã có).
+- Hiện trạng: `CLAUDE.md`, `Assets/Editor/LevelBuilder/Level1Builder.cs` (màn đã có), `Assets/Scripts/` (cơ chế đã có), `asset-pipeline/manifest.yaml` + `pipeline status` (asset đã có).
 - `docs/design/roadmap.md`, `docs/tasks/backlog.md` nếu đã tồn tại: cập nhật, **không xóa task đã xong**, không đổi ID cũ.
 
 ## Bước 2. Hỏi người dùng những gì kế hoạch phụ thuộc vào (nếu chưa rõ)
-- Đi tiếp bản HD, Pixel hay giữ cả hai.
 - Ngân sách Vertex AI cho giai đoạn này (credit còn lại).
 - Ưu tiên: chơi được hết cốt truyện thô trước (khuyên dùng) hay làm đẹp từng màn.
 

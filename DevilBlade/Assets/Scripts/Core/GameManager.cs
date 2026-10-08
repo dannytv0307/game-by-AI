@@ -47,7 +47,7 @@ namespace DevilBlade
                 audio.PlayMusic(audio.musicLevel, 0.1f);
                 audio.Voice(audio.voiceIntro);
             }
-            hud?.ShowMessage("A/D di chuyển · Space nhảy · J chém · K hóa quỷ · Tab đổi đồ họa Pixel/HD", 5f);
+            hud?.ShowMessage("A/D di chuyển · Space nhảy · J chém · K hóa quỷ", 5f);
         }
 
         void Update()
@@ -56,12 +56,6 @@ namespace DevilBlade
             var kb = Keyboard.current;
             if (kb == null) return;
             if (State == Phase.Won && (kb.enterKey.wasPressedThisFrame || kb.rKey.wasPressedThisFrame)) Restart();
-            // Tab: đổi giữa bản HD (cảnh 0) và bản Pixel (cảnh 1)
-            if (kb.tabKey.wasPressedThisFrame && SceneManager.sceneCountInBuildSettings > 1)
-            {
-                Time.timeScale = 1f;
-                SceneManager.LoadScene(1 - SceneManager.GetActiveScene().buildIndex);
-            }
             if (kb.escapeKey.wasPressedThisFrame && State != Phase.Won) TogglePause();
             if (_paused && kb.rKey.wasPressedThisFrame) Restart();
         }

@@ -36,7 +36,7 @@ class Context:
     # ---- phong cách ----
     @staticmethod
     def style_name(a):
-        return a.get("style", "pixel")
+        return a.get("style", "hd")  # pixel đã gỡ khỏi game (2026-10-08)
 
     def art(self, a):
         return self.styles[self.style_name(a)]["art"]

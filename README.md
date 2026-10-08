@@ -1,6 +1,6 @@
 # DevilBlade
 
-Game hành động 2D pixel art (platformer + chiến đấu). Toàn bộ hình ảnh và âm thanh được tạo bằng AI trên Google Vertex AI, thông qua pipeline trong `asset-pipeline/`.
+Game hành động 2D đồ họa HD vẽ tay, u tối (platformer + chiến đấu). Toàn bộ hình ảnh và âm thanh được tạo bằng AI trên Google Vertex AI, thông qua pipeline trong `asset-pipeline/`.
 
 - `DevilBlade/`: dự án Unity 6000.3.25f1 (URP 2D). Màn 1 chơi được từ đầu đến khi hạ boss.
 - `asset-pipeline/`: pipeline Python tạo đồ họa và âm thanh, có cơ chế giữ phong cách đồng nhất.

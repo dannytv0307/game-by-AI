@@ -18,5 +18,5 @@ Select-String -Path $log -Pattern "\[GameBuild\]|error CS" | Select-Object -Firs
 ```
 
 4. Thành công khi exit 0 và có dòng `[GameBuild] Succeeded`. Nếu lỗi `error CS`, sửa code rồi chạy lại.
-5. Kết quả: `DevilBlade/Builds/Windows/DevilBlade.exe` (không nằm trong git). Scene 0 là `Level1_HD`, Tab đổi sang bản Pixel.
+5. Kết quả: `DevilBlade/Builds/Windows/DevilBlade.exe` (không nằm trong git). Hiện có một scene: `Level1`.
 6. Scene `.unity` và `ProjectSettings/EditorBuildSettings.asset` thay đổi sau khi dựng: commit cùng thay đổi code.

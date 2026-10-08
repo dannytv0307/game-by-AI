@@ -11,16 +11,13 @@ namespace DevilBlade.EditorTools
 {
     /// <summary>
     /// Tự cấu hình import cho asset do asset-pipeline/ sinh ra:
-    ///  - Assets/Art/**  : sprite pixel art (Point, không nén, PPU cố định). Sprite sheet animation được
-    ///    cắt theo file *.sheet.json đi kèm; tileset cắt theo lưới tile.
+    ///  - Assets/ArtHD/**: sprite HD (Bilinear, không nén). Sprite sheet animation được cắt theo file
+    ///    *.sheet.json đi kèm; tileset cắt theo lưới tile; sprite đơn của nhân vật có pivot ở chân.
     ///  - Assets/Audio/**: Music = streaming, SFX = giải nén khi load, Voice = nén trong bộ nhớ.
-    /// PPU và kích thước tile phải khớp asset-pipeline/bible/style.yaml (art.pixel).
+    /// PPU và kích thước tile phải khớp asset-pipeline/bible/style_hd.yaml (art.hd).
     /// </summary>
     public class DevilBladeAssetImporter : AssetPostprocessor
     {
-        const int PixelsPerUnit = 32;
-        const int TileSize = 32;
-        const string ArtRoot = "Assets/Art/";
         const string AudioRoot = "Assets/Audio/";
 
         [Serializable]
@@ -32,8 +29,7 @@ namespace DevilBlade.EditorTools
             public float[] pivot;
         }
 
-        // Nhánh thử nghiệm HD (asset-pipeline/bible/style_hd.yaml). Kích thước trong thế giới giữ như bản pixel:
-        // Kael HD 360px ≈ 2.1 unit, 1 tile 256px = 1 unit, nền 1920px ≈ 20 unit.
+        // Kích thước trong thế giới: Kael 360px ≈ 2.1 unit, 1 tile 256px = 1 unit, nền 1920px ≈ 20 unit.
         const string ArtHdRoot = "Assets/ArtHD/";
         const int HdCharacterPPU = 170;
         const int HdTileSize = 256;
@@ -41,22 +37,19 @@ namespace DevilBlade.EditorTools
 
         void OnPreprocessTexture()
         {
-            var hd = assetPath.StartsWith(ArtHdRoot);
-            if (!hd && !assetPath.StartsWith(ArtRoot)) return;
-            var root = hd ? ArtHdRoot : ArtRoot;
-            var tileSize = hd ? HdTileSize : TileSize;
+            if (!assetPath.StartsWith(ArtHdRoot)) return;
+            const string root = ArtHdRoot;
             var ti = (TextureImporter)assetImporter;
             ti.textureType = TextureImporterType.Sprite;
-            ti.spritePixelsPerUnit = !hd ? PixelsPerUnit
-                : assetPath.StartsWith(root + "Tiles/") ? HdTileSize
+            ti.spritePixelsPerUnit = assetPath.StartsWith(root + "Tiles/") ? HdTileSize
                 : assetPath.StartsWith(root + "Backgrounds/") ? HdBackgroundPPU
                 : HdCharacterPPU;
-            ti.filterMode = hd ? FilterMode.Bilinear : FilterMode.Point;
+            ti.filterMode = FilterMode.Bilinear;
             ti.textureCompression = TextureImporterCompression.Uncompressed;
             ti.mipmapEnabled = false;
             ti.alphaIsTransparency = true;
             ti.wrapMode = TextureWrapMode.Clamp;
-            if (hd) ti.maxTextureSize = 4096;
+            ti.maxTextureSize = 4096;
 
             var sheetPath = Path.ChangeExtension(assetPath, ".sheet.json");
             var meta = File.Exists(sheetPath) ? JsonUtility.FromJson<SheetMeta>(File.ReadAllText(sheetPath)) : null;
@@ -70,12 +63,12 @@ namespace DevilBlade.EditorTools
             {
                 ti.spriteImportMode = SpriteImportMode.Multiple;
                 var (w, h) = TextureSize(ti);
-                SliceGrid(ti, tileSize, tileSize, w / tileSize, h / tileSize, new Vector2(0.5f, 0.5f));
+                SliceGrid(ti, HdTileSize, HdTileSize, w / HdTileSize, h / HdTileSize, new Vector2(0.5f, 0.5f));
             }
             else
             {
                 ti.spriteImportMode = SpriteImportMode.Single;
-                if (hd && !assetPath.StartsWith(root + "Backgrounds/"))
+                if (!assetPath.StartsWith(root + "Backgrounds/"))
                 {
                     // sprite đơn của nhân vật: pivot ở chân (đáy-giữa) để khớp collider & mặt đất
                     var s = new TextureImporterSettings();
@@ -166,7 +159,7 @@ namespace DevilBlade.EditorTools
         {
             foreach (var p in imported)
             {
-                if (!(p.StartsWith(ArtRoot) || p.StartsWith(ArtHdRoot)) || !p.EndsWith(".sheet.json")) continue;
+                if (!p.StartsWith(ArtHdRoot) || !p.EndsWith(".sheet.json")) continue;
                 var png = p.Substring(0, p.Length - ".sheet.json".Length) + ".png";
                 if (File.Exists(png)) AssetDatabase.ImportAsset(png, ImportAssetOptions.ForceUpdate);
             }

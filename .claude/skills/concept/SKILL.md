@@ -10,7 +10,7 @@ Concept là cầu nối giữa cốt truyện (`docs/design/story.md`) và pipel
 **lời mô tả + ảnh của người dùng → `docs/design/.../<id>.md` → `entities.yaml` → anchor → mọi asset khác.**
 
 ## Bước 1. Xác định đối tượng
-- Lấy id từ `$ARGUMENTS`. Dùng id gốc không có hậu tố `_hd` (ví dụ `hero`, `imp`, `ruined_village`); concept dùng chung cho bản Pixel và HD.
+- Lấy id từ `$ARGUMENTS`. Dùng id gốc không có hậu tố `_hd` (ví dụ `hero`, `imp`, `ruined_village`); thư mục concept `docs/concepts/<id>/` dùng chung cho entity `<id>_hd`.
 - Đọc `docs/design/art_direction.md` (định hướng mỹ thuật chung; mọi concept phải theo). Nếu `$ARGUMENTS` là phong cách chung chứ không phải một id, cập nhật file này thay vì tạo concept nhân vật.
 - Đọc mô tả hiện có trong `asset-pipeline/bible/entities.yaml` (cả `<id>` và `<id>_hd`), phần liên quan trong `docs/design/story.md`, và `docs/design/characters/<id>.md` nếu đã có.
 

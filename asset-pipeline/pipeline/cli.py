@@ -26,7 +26,7 @@ def _check_prereq(ctx, a):
         tile = "style_tile" if style == "pixel" else f"style_tile_{style}"
         raise SystemExit(f"Chưa có style tile cho phong cách '{style}'. Gen và approve '{tile}' trước.")
     ent = ctx.entities.get(a.get("entity") or "")
-    if ent and ent.get("style", "pixel") != style:
+    if ent and ent.get("style", "hd") != style:
         raise SystemExit(f"Entity '{a['entity']}' thuộc phong cách '{ent.get('style', 'pixel')}', asset lại là '{style}'.")
     if a["type"] == "anchor" and ent and ent.get("based_on") and not ctx.entity_ref(ent["based_on"]):
         raise SystemExit(f"Cần anchor của '{ent['based_on']}' trước.")

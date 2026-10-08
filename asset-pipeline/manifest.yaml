@@ -1,8 +1,8 @@
 # Danh sách asset của game. Mỗi id là duy nhất; output được đặt theo id.
 # Loại:
 #   anchor     – tấm tham chiếu nhân vật/thực thể -> refs/<entity>.png (gen TRƯỚC mọi asset khác của entity)
-#   style      – style tile tổng -> refs/_style.png (gen ĐẦU TIÊN, gửi kèm mọi ảnh)
-#   sprite     – 1 hình tĩnh, tách nền, lượng tử về palette
+#   style      – style tile tổng -> refs/_style_hd.png (gen ĐẦU TIÊN, gửi kèm mọi ảnh)
+#   sprite     – 1 hình tĩnh, tách nền, pivot ở chân
 #   anim       – dải N frame trên cùng 1 ảnh -> sprite sheet ngang, pivot đáy-giữa
 #   tileset    – lưới tile vuông `tile` px, cols x rows
 #   background – ảnh nền (không tách nền), kích thước width x height px
@@ -11,134 +11,14 @@
 #   sfx        – tổng hợp bằng code (không gọi API), preset trong pipeline/sfx.py
 
 assets:
-  # ---------- Nền móng đồng nhất ----------
-  - id: style_tile
-    type: style
-    prompt: >
-      A style guide sheet for the game: on the left a small human warrior sprite and a small crimson demon sprite,
-      in the middle a 3x3 block of stone brick platform tiles, on the right a ruined house prop and an ember particle,
-      all sharing one consistent palette and lighting. Clean layout on a flat dark background.
-
-  - { id: hero_anchor,         type: anchor, entity: hero }
-  - { id: hero_demon_anchor,   type: anchor, entity: hero_demon }
-  - { id: imp_anchor,          type: anchor, entity: imp }
-  - { id: hellhound_anchor,    type: anchor, entity: hellhound }
-  - { id: demon_knight_anchor, type: anchor, entity: demon_knight }
-
-  # ---------- Nhân vật chính ----------
-  - id: hero_idle
-    type: anim
-    entity: hero
-    frames: 4
-    action: idle breathing stance, greatsword resting on shoulder, subtle chest rise and fall
-    out: Characters/Hero/hero_idle.png
-  - id: hero_run
-    type: anim
-    entity: hero
-    frames: 6
-    action: running cycle, sword held low behind, coat flowing
-    out: Characters/Hero/hero_run.png
-  - id: hero_jump
-    type: anim
-    entity: hero
-    frames: 3
-    action: "jump sequence: crouch takeoff, mid-air tuck, falling with coat billowing"
-    out: Characters/Hero/hero_jump.png
-  - id: hero_attack1
-    type: anim
-    entity: hero
-    frames: 5
-    action: horizontal greatsword slash combo first hit, wind-up, swing, follow-through with a white slash arc
-    out: Characters/Hero/hero_attack1.png
-  - id: hero_hurt
-    type: anim
-    entity: hero
-    frames: 2
-    action: recoiling from a hit, flinching backwards
-    out: Characters/Hero/hero_hurt.png
-  - id: hero_transform
-    type: anim
-    entity: hero_demon
-    frames: 6
-    action: >
-      transformation from human Kael into demon form: crimson veins spread, body engulfed in crimson flame burst,
-      horns grow, emerges as demon form. First frame is fully human, last frame fully demon.
-    out: Characters/Hero/hero_transform.png
-  - id: hero_demon_idle
-    type: anim
-    entity: hero_demon
-    frames: 4
-    action: menacing idle, flames flickering on sword and body
-    out: Characters/HeroDemon/hero_demon_idle.png
-  - id: hero_demon_attack
-    type: anim
-    entity: hero_demon
-    frames: 5
-    action: overhead flaming greatsword smash with a crimson fire arc
-    out: Characters/HeroDemon/hero_demon_attack.png
-
-  # ---------- Quái ----------
-  - id: imp_run
-    type: anim
-    entity: imp
-    frames: 4
-    action: skittering run on all fours, claws forward
-    out: Enemies/Imp/imp_run.png
-  - id: imp_attack
-    type: anim
-    entity: imp
-    frames: 4
-    action: leaping claw swipe
-    out: Enemies/Imp/imp_attack.png
-  - id: hellhound_run
-    type: anim
-    entity: hellhound
-    frames: 6
-    action: galloping run cycle, embers trailing from mouth
-    out: Enemies/Hellhound/hellhound_run.png
-  - id: demon_knight_idle
-    type: anim
-    entity: demon_knight
-    frames: 4
-    action: heavy breathing idle, cleaver dragging on ground, banner swaying
-    out: Enemies/DemonKnight/demon_knight_idle.png
-
-  # ---------- Môi trường ----------
-  - id: village_tiles
-    type: tileset
-    zone: ruined_village
-    cols: 6
-    rows: 4
-    prompt: >
-      Platformer tileset: cobblestone ground top edges and fill, wooden plank platforms, broken stone wall pieces,
-      charred timber beams, each tile seamless and aligned to the grid.
-    out: Tiles/Village/village_tiles.png
-  - id: village_bg_far
-    type: background
-    zone: ruined_village
-    width: 640
-    height: 360
-    prompt: far parallax layer, distant burning village skyline and broken bell tower silhouette against the dusk sky
-    out: Backgrounds/Village/village_bg_far.png
-  - id: village_bg_mid
-    type: background
-    zone: ruined_village
-    width: 640
-    height: 360
-    transparent: true
-    prompt: >
-      mid-ground parallax layer: dark blue-black silhouettes of collapsed timber houses, a broken fence and dead trees,
-      occupying only the lower 60% of the image. The entire sky area above them is solid flat magenta, no sky, no clouds, no gradient
-    out: Backgrounds/Village/village_bg_mid.png
-
   # ---------- Âm thanh ----------
   - { id: music_village,  type: music, zone: ruined_village, prompt: "exploration theme",       out: Music/music_village.wav }
   - { id: music_hellgate, type: music, zone: hell_gate,      prompt: "combat theme",            out: Music/music_hellgate.wav }
   - { id: music_boss,     type: music, zone: hell_gate,      prompt: "epic boss battle theme, heavier choir and organ, relentless", out: Music/music_boss.wav }
 
-  - { id: vo_hero_transform, type: voice, entity: hero_demon,   line: "Blood... of the abyss... AWAKEN!",            out: Voice/vo_hero_transform.wav }
-  - { id: vo_hero_intro,     type: voice, entity: hero,         line: "They took everything. I'll send them back to hell.", out: Voice/vo_hero_intro.wav }
-  - { id: vo_boss_taunt,     type: voice, entity: demon_knight, line: "You carry our blood, half-breed. Kneel.",   out: Voice/vo_boss_taunt.wav }
+  - { id: vo_hero_transform, type: voice, entity: hero_demon_hd, line: "Blood... of the abyss... AWAKEN!",            out: Voice/vo_hero_transform.wav }
+  - { id: vo_hero_intro,     type: voice, entity: hero_hd,      line: "They took everything. I'll send them back to hell.", out: Voice/vo_hero_intro.wav }
+  - { id: vo_boss_taunt,     type: voice, entity: demon_knight_hd, line: "You carry our blood, half-breed. Kneel.",   out: Voice/vo_boss_taunt.wav }
 
   - { id: sfx_slash,     type: sfx, preset: slash,     out: SFX/sfx_slash.wav }
   - { id: sfx_hit,       type: sfx, preset: hit,       out: SFX/sfx_hit.wav }
@@ -149,7 +29,7 @@ assets:
   - { id: sfx_transform, type: sfx, preset: transform, out: SFX/sfx_transform.wav }
   - { id: sfx_enemy_die, type: sfx, preset: enemy_die, out: SFX/sfx_enemy_die.wav }
 
-  # ================= THỬ NGHIỆM PHONG CÁCH HD U TỐI (style: hd) =================
+  # ================= ĐỒ HỌA HD (style: hd) =================
   # Thứ tự: style_tile_hd -> hero_hd_anchor -> hero_demon_hd_anchor -> các asset còn lại.
   - id: style_tile_hd
     type: style

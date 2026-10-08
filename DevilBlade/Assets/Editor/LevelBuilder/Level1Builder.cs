@@ -20,7 +20,6 @@ namespace DevilBlade.EditorTools
     public static class Level1Builder
     {
         public const string ScenePath = "Assets/Scenes/Level1.unity";
-        public const string ScenePathHD = "Assets/Scenes/Level1_HD.unity";
         const string UnlitMat = "Packages/com.unity.render-pipelines.universal/Runtime/Materials/Sprite-Unlit-Default.mat";
 
         // ---------------- SKIN: cùng bố cục màn, khác bộ đồ họa ----------------
@@ -30,7 +29,7 @@ namespace DevilBlade.EditorTools
             public int[] GroundTop, GroundFill, Platform, Decor, Gate;
             public int CheckpointTile;
             public Vector3 CheckpointOffset, CheckpointScale = Vector3.one;
-            public bool PixelPerfect, ProceduralMotion;
+            public bool ProceduralMotion;
             public Color GroundTint = Color.white;
             public (string sprite, float fx, float fy, float baseY, int order, Color tint, float scale)[] Backgrounds;
             public System.Func<List<SpriteAnimator.Clip>> Player;
@@ -41,52 +40,11 @@ namespace DevilBlade.EditorTools
 
         static Sprite[] Repeat(Sprite[] s, int n) => Enumerable.Repeat(s[0], n).ToArray();
 
-        static readonly Skin Pixel = new()
-        {
-            Name = "Pixel", ScenePath = ScenePath, ArtRoot = "Assets/Art/",
-            TilesDir = "Assets/Tiles/Village/", TilesSheet = "Tiles/Village/village_tiles.png",
-            GroundTop = new[] { 0, 1, 2 }, GroundFill = new[] { 6, 7 }, Platform = new[] { 18, 19 },
-            Decor = new[] { 9, 10, 11 }, Gate = new[] { 4, 5 }, CheckpointTile = 23, CheckpointOffset = new Vector3(0, 0.5f, 0),
-            PixelPerfect = true,
-            Backgrounds = new[]
-            {
-                ("Backgrounds/Village/village_bg_far.png", 0.9f, 0.95f, 6f, -100, new Color(0.45f, 0.45f, 0.58f), 1.35f), // phóng to để luôn phủ kín khung hình
-                ("Backgrounds/Village/village_bg_mid.png", 0.6f, 0.75f, 5f, -90, new Color(0.62f, 0.6f, 0.72f), 1f),
-            },
-            Player = () =>
-            {
-                var jump = Sheet("Characters/Hero/hero_jump.png");
-                return new List<SpriteAnimator.Clip>
-                {
-                    Clip("idle", Sheet("Characters/Hero/hero_idle.png"), 6),
-                    Clip("run", Sheet("Characters/Hero/hero_run.png"), 12),
-                    Clip("jump", new[] { jump[Mathf.Min(1, jump.Length - 1)] }, 1),
-                    Clip("fall", new[] { jump[jump.Length - 1] }, 1),
-                    Clip("attack", Sheet("Characters/Hero/hero_attack1.png"), 14, false),
-                    Clip("hurt", Sheet("Characters/Hero/hero_hurt.png"), 8, false),
-                    Clip("transform", Sheet("Characters/Hero/hero_transform.png"), 8, false),
-                    Clip("d_idle", Sheet("Characters/HeroDemon/hero_demon_idle.png"), 7),
-                    Clip("d_attack", Sheet("Characters/HeroDemon/hero_demon_attack.png"), 15, false),
-                };
-            },
-            Imp = () => new()
-            {
-                ["run"] = (Sheet("Enemies/Imp/imp_run.png"), 12, true),
-                ["attack"] = (Sheet("Enemies/Imp/imp_attack.png"), 10, false),
-            },
-            Hound = () =>
-            {
-                var run = Sheet("Enemies/Hellhound/hellhound_run.png");
-                return new() { ["idle"] = (new[] { run[0] }, 1, true), ["run"] = (run, 14, true) };
-            },
-            Boss = () => new() { ["idle"] = (Sheet("Enemies/DemonKnight/demon_knight_idle.png"), 5, true) },
-        };
-
         // HD: phần lớn là tư thế tĩnh (AI vẽ từng frame chân thật không đồng nhất) + chuyển động thủ tục (ProceduralPoseMotion).
-        // Số frame lặp lại để giữ đúng thời điểm ra đòn (attackHitFrame) như bản pixel.
+        // Số frame lặp lại để giữ đúng thời điểm ra đòn (attackHitFrame).
         static readonly Skin HD = new()
         {
-            Name = "HD", ScenePath = ScenePathHD, ArtRoot = "Assets/ArtHD/",
+            Name = "HD", ScenePath = ScenePath, ArtRoot = "Assets/ArtHD/",
             TilesDir = "Assets/Tiles/VillageHD/", TilesSheet = "Tiles/VillageHD/village_hd_tiles.png",
             GroundTop = new[] { 0 }, GroundFill = new[] { 4 }, Platform = new[] { 2, 3 }, GroundTint = new Color(0.62f, 0.6f, 0.66f), // 1 biến thể + tối bớt => đỡ lộ đường nối ô
             Decor = new int[0], Gate = new[] { 2, 3 }, CheckpointTile = 6,
@@ -157,17 +115,12 @@ namespace DevilBlade.EditorTools
         const float ArenaTriggerX = 101f;
         static readonly Rect CameraBounds = new(-4, -3, 140, 24);
 
-        /// <summary>Dựng cả hai bản: Level1_HD (cảnh 0, mở đầu tiên) và Level1 (pixel, cảnh 1). Tab trong game để đổi.</summary>
-        [MenuItem("DevilBlade/Build Level 1 (Pixel + HD)")]
+        /// <summary>Dựng màn 1 (đồ họa HD).</summary>
+        [MenuItem("DevilBlade/Build Level 1")]
         public static void Build()
         {
-            Build(Pixel);
             Build(HD);
-            EditorBuildSettings.scenes = new[]
-            {
-                new EditorBuildSettingsScene(ScenePathHD, true), // HD mở trước
-                new EditorBuildSettingsScene(ScenePath, true),
-            };
+            EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
             AssetDatabase.SaveAssets();
         }
 
@@ -240,7 +193,7 @@ namespace DevilBlade.EditorTools
 
         static Sprite EnsureWhiteSprite()
         {
-            const string path = "Assets/Art/UI/white.png"; // UI dùng chung cho mọi skin
+            const string path = "Assets/ArtHD/UI/white.png";
             if (!File.Exists(path))
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(path)!);
@@ -315,13 +268,6 @@ namespace DevilBlade.EditorTools
             cam.backgroundColor = new Color32(0x1f, 0x1a, 0x24, 255);
             go.AddComponent<AudioListener>();
             go.AddComponent<UniversalAdditionalCameraData>();
-            if (S.PixelPerfect)
-            {
-                var ppc = go.AddComponent<PixelPerfectCamera>();
-                ppc.assetsPPU = 32;
-                ppc.refResolutionX = 640;
-                ppc.refResolutionY = 360;
-            }
             go.AddComponent<CinemachineBrain>();
             return cam;
         }
@@ -348,7 +294,6 @@ namespace DevilBlade.EditorTools
             bounds.layer = 2; // Ignore Raycast — không ảnh hưởng gameplay
             var confiner = go.AddComponent<CinemachineConfiner2D>();
             confiner.BoundingShape2D = poly;
-            if (S.PixelPerfect) go.AddComponent<CinemachinePixelPerfect>();
         }
 
         // ================= nền =================

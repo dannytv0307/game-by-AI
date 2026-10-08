@@ -21,8 +21,6 @@ namespace DevilBlade.EditorTools
             var cam = Camera.main;
             var brain = cam.GetComponent<CinemachineBrain>();
             if (brain) brain.enabled = false;
-            var ppc = cam.GetComponent<UnityEngine.Rendering.Universal.PixelPerfectCamera>();
-            if (ppc) ppc.enabled = false;
             cam.orthographicSize = 5.625f;
 
             var dir = Path.Combine("Logs", "Screens");

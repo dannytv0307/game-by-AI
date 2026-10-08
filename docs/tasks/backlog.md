@@ -7,7 +7,7 @@ Trạng thái: `todo` · `doing` · `done` · `blocked`.
 
 | ID | Tiêu đề | Mốc | Trạng thái | Phụ thuộc |
 |---|---|---|---|---|
-| T-001 | Gỡ bản Pixel, chỉ còn HD | M0 | todo | — |
+| T-001 | Gỡ bản Pixel, chỉ còn HD | M0 | done | — |
 | T-002 | LevelDefinition + builder đa màn | M0 | todo | T-001 |
 | T-003 | Luồng màn chơi + lưu tiến trình | M0 | todo | T-002 |
 | T-004 | Hệ thẻ truyện | M0 | todo | T-003 |
@@ -81,14 +81,15 @@ Trạng thái: `todo` · `doing` · `done` · `blocked`.
 ## M0 · Nền tảng
 
 ## T-001 · Gỡ bản Pixel, chỉ còn HD
-- Trạng thái: todo
+- Trạng thái: done
 - Mốc: M0 · Loại: tech
 - Phụ thuộc: —
 - Chi phí API: 0
 - Công cụ: `build-game`, `run-tests`
-- Việc cần làm: bỏ skin `Pixel` khỏi `Level1Builder.Build()` và build settings; bỏ phím Tab trong `GameManager` và câu hướng dẫn; bỏ fixture `Level1` trong `Level1Tests`/`Level1CaptureTests`; xóa scene `Level1.unity`. Giữ `Assets/Art` (pixel) và mục pixel trong manifest, ghi chú "lưu trữ" trong `CLAUDE.md`.
-- Tiêu chí xong: build chỉ có `Level1_HD`; test PlayMode qua; `CLAUDE.md` cập nhật.
-- Ghi chú:
+- Việc cần làm: theo yêu cầu người dùng, gỡ **toàn bộ** ảnh pixel (không giữ lại trong repo): skin Pixel, phím Tab, fixture test, scene cũ, `Assets/Art`, tile pixel, mục pixel trong manifest/entities, ảnh tham chiếu pixel; cập nhật `CLAUDE.md`, skill, hook.
+- Tiêu chí xong: build chỉ có `Level1` (HD); test PlayMode qua; `CLAUDE.md` cập nhật.
+- Ghi chú: xong 2026-10-08. Scene HD đổi tên thành `Assets/Scenes/Level1.unity` (bỏ hậu tố _HD). Đã xóa `Assets/Art` (sprite, tileset, nền pixel), `Assets/Tiles/Village`, 6 ảnh tham chiếu pixel trong `refs/`, 21 mục ảnh pixel trong manifest và 5 entity pixel. Giọng thoại chuyển sang entity HD (`hero_hd`, `hero_demon_hd`, `demon_knight_hd`). Pipeline mặc định `style: hd`. Ảnh trắng cho HUD chuyển sang `Assets/ArtHD/UI/white.png`. Test 8/8 qua, build Windows 112 MB, 0 lỗi. Chi phí API: 0.
+  Còn lại: code xử lý pixel trong `asset-pipeline/pipeline/pixel.py` và phần `art` của `style.yaml` vẫn còn (HD dùng chung vài hàm đọc ảnh); không ảnh hưởng gì. Ảnh pixel cũ xem lại được trong lịch sử git.
 
 ## T-002 · LevelDefinition + builder đa màn
 - Trạng thái: todo

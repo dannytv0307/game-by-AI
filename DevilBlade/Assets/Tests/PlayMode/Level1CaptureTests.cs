@@ -13,7 +13,6 @@ namespace DevilBlade.Tests
     /// </summary>
     [Category("Capture")]
     [TestFixture("Level1")]
-    [TestFixture("Level1_HD")]
     public class Level1CaptureTests
     {
         readonly string _scene;

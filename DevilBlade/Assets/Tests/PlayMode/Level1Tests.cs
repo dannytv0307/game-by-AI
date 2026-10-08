@@ -9,7 +9,6 @@ namespace DevilBlade.Tests
 {
     /// <summary>Kiểm thử khói cho màn 1: vật lý, di chuyển, chém, hóa quỷ, hồi sinh, đấu boss.</summary>
     [TestFixture("Level1")]
-    [TestFixture("Level1_HD")]
     public class Level1Tests
     {
         readonly string _scene;
