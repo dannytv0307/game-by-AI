@@ -17,8 +17,8 @@ def _client(project, location):
     return _clients[k]
 
 
-def generate_image(cfg, model, prompt, refs, aspect):
-    """refs: list[Path]. Trả về bytes PNG."""
+def generate_image(cfg, model, prompt, refs, aspect, image_size=None):
+    """refs: list[Path]. image_size: None (mặc định của mô hình) | "1K" | "2K" | "4K". Trả về bytes PNG."""
     c = _client(cfg["gcp"]["project"], cfg["gcp"]["image_location"])
     contents = [types.Part.from_bytes(data=p.read_bytes(), mime_type="image/png") for p in refs]
     contents.append(prompt)
@@ -27,7 +27,7 @@ def generate_image(cfg, model, prompt, refs, aspect):
         contents=contents,
         config=types.GenerateContentConfig(
             response_modalities=["IMAGE"],
-            image_config=types.ImageConfig(aspect_ratio=aspect),
+            image_config=types.ImageConfig(aspect_ratio=aspect, image_size=image_size),
         ),
     )
     for part in r.candidates[0].content.parts:

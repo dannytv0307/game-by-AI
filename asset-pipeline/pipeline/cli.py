@@ -1,4 +1,4 @@
-"""CLI của pipeline asset DevilBlade.
+﻿"""CLI của pipeline asset DevilBlade.
 
   python -m pipeline status                     # asset nào đã duyệt / còn thiếu / thiếu anchor
   python -m pipeline prompt <id>                # xem prompt + refs sẽ gửi (không tốn tiền)
@@ -13,20 +13,24 @@ import json
 import shutil
 import time
 
-from . import audio, pixel, prompts, sfx, vertex
+from . import audio, hd, pixel, prompts, sfx, vertex
 from .core import Context, sha1, stable_seed
 
-IMAGE_TYPES = {"style", "anchor", "sprite", "anim", "tileset", "background"}
+IMAGE_TYPES = {"style", "anchor", "sprite", "anim", "tileset", "background", "parts"}
 
 
 def _check_prereq(ctx, a):
-    """Thứ tự bắt buộc: style tile -> anchor của entity -> các asset của entity."""
-    if a["type"] != "style" and a["type"] in IMAGE_TYPES and not ctx.style_ref():
-        raise SystemExit("Chưa có refs/_style.png. Gen và approve 'style_tile' trước.")
+    """Thứ tự bắt buộc: style tile (của đúng phong cách) -> anchor của entity -> các asset của entity."""
+    style = ctx.style_name(a)
+    if a["type"] != "style" and a["type"] in IMAGE_TYPES and not ctx.style_ref(style):
+        tile = "style_tile" if style == "pixel" else f"style_tile_{style}"
+        raise SystemExit(f"Chưa có style tile cho phong cách '{style}'. Gen và approve '{tile}' trước.")
     ent = ctx.entities.get(a.get("entity") or "")
+    if ent and ent.get("style", "pixel") != style:
+        raise SystemExit(f"Entity '{a['entity']}' thuộc phong cách '{ent.get('style', 'pixel')}', asset lại là '{style}'.")
     if a["type"] == "anchor" and ent and ent.get("based_on") and not ctx.entity_ref(ent["based_on"]):
         raise SystemExit(f"Cần anchor của '{ent['based_on']}' trước.")
-    if a["type"] in ("sprite", "anim") and not ctx.entity_ref(a["entity"]):
+    if a["type"] in ("sprite", "anim", "parts") and not ctx.entity_ref(a["entity"]):
         raise SystemExit(f"Chưa có anchor refs/{a['entity']}.png. Gen và approve '{a['entity']}_anchor' trước.")
 
 
@@ -40,15 +44,14 @@ def gen_image(ctx, a, n, draft, allow_over):
     _check_prereq(ctx, a)
     prompt, refs, aspect = prompts.image_job(ctx, a)
     model = ctx.config["models"]["image_draft" if draft else "image"]
+    # HD cần độ phân giải cao hơn (giá cao hơn); pixel dùng mặc định của mô hình
+    size = ctx.config["models"].get("image_size_hd") if ctx.style_name(a) == "hd" and not draft else None
     ctx.spend(n, allow_over)
-    art = ctx.style["art"]
-    pal = pixel.Palette(art["palette"])
-    key = art["background_key"]
     out = _run_dir(ctx, a["id"])
     (out / "prompt.txt").write_text(prompt, encoding="utf-8")
     for k in range(1, n + 1):
-        print(f"[{a['id']}] ứng viên {k}/{n} — {model}")
-        raw = vertex.generate_image(ctx.config, model, prompt, [p for p, _ in refs], aspect)
+        print(f"[{a['id']}] ứng viên {k}/{n} — {model}{' ' + size if size else ''}")
+        raw = vertex.generate_image(ctx.config, model, prompt, [p for p, _ in refs], aspect, size)
         (out / f"{k}_raw.png").write_bytes(raw)
         meta = postprocess_image(ctx, a, out, k)
         ctx.log(id=a["id"], type=a["type"], model=model, prompt=prompt, aspect=aspect,
@@ -59,6 +62,8 @@ def gen_image(ctx, a, n, draft, allow_over):
 
 def postprocess_image(ctx, a, out, k):
     """Ảnh gốc {k}_raw.png -> {k}.png (+ _preview, + {k}.json cho anim). Chạy lại được mà không tốn API."""
+    if ctx.style_name(a) == "hd":
+        return _postprocess_hd(ctx, a, out, k)
     art = ctx.style["art"]
     pal = pixel.Palette(art["palette"])
     key = art["background_key"]
@@ -82,6 +87,41 @@ def postprocess_image(ctx, a, out, k):
             arr = pixel.process_background(raw, pal, a["width"], a["height"], key if a.get("transparent") else None)
             pixel.save_rgba(arr, out / f"{k}.png", 2)
     except Exception as e:  # ảnh gốc vẫn được giữ để xem lại
+        print(f"  ! hậu kỳ lỗi: {e}")
+        meta["postprocess_error"] = str(e)
+    if meta:
+        (out / f"{k}.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
+    return meta
+
+
+def _postprocess_hd(ctx, a, out, k):
+    art = ctx.art(a)
+    key = art["background_key"]
+    ent = ctx.entities.get(a.get("entity") or "")
+    raw = (out / f"{k}_raw.png").read_bytes()
+    t = a["type"]
+    meta = {}
+    try:
+        if t in ("anchor", "sprite"):
+            hd.save(hd.process_sprite(raw, key, ent["height_px"] * (2 if t == "anchor" else 1)), out / f"{k}.png")
+        elif t == "anim":
+            cols, rows, _ = prompts.anim_layout(a["frames"])
+            arr, meta = hd.process_anim(raw, key, ent["height_px"], a["frames"], cols, rows)
+            hd.save(arr, out / f"{k}.png")
+        elif t == "parts":
+            pieces = hd.process_parts(raw, key)
+            pdir = out / f"{k}_parts"
+            for i, (bb, arr) in enumerate(pieces):
+                hd.save(arr, pdir / f"part_{i:02d}.png", checker_preview=False)
+            meta = {"parts": [{"file": f"part_{i:02d}.png", "bbox": [int(v) for v in bb]} for i, (bb, _) in enumerate(pieces)]}
+            # bản xem nhanh: toàn bộ tấm đã tách nền
+            hd.save(hd.soft_key(pixel.load(raw), key).astype("uint8"), out / f"{k}.png")
+            print(f"  → tách được {len(pieces)} bộ phận")
+        elif t == "background":
+            hd.save(hd.process_background(raw, a["width"], a["height"]), out / f"{k}.png", checker_preview=False)
+        elif t == "style":
+            pass  # style tile dùng ảnh gốc làm tham chiếu
+    except Exception as e:
         print(f"  ! hậu kỳ lỗi: {e}")
         meta["postprocess_error"] = str(e)
     if meta:
@@ -167,6 +207,9 @@ def cmd_approve(ctx, args):
     if not src.exists():
         raise SystemExit(f"Không thấy {src}")
     shutil.copy2(src, dest)
+    parts_dir = run / f"{k}_parts"
+    if parts_dir.exists():  # các bộ phận đã tách để rig
+        shutil.copytree(parts_dir, dest.with_name(dest.stem.removesuffix("_parts") + "_pieces"), dirs_exist_ok=True)
     side = run / f"{k}.json"
     if side.exists():  # thông tin cắt sprite sheet cho Unity importer
         shutil.copy2(side, dest.with_suffix(".sheet.json"))

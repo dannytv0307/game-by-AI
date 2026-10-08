@@ -17,7 +17,9 @@ def _load(rel):
 class Context:
     def __init__(self):
         self.config = _load("config.yaml")
-        self.style = _load("bible/style.yaml")
+        # "pixel" là phong cách chính (cũng chứa phần audio); "hd" là nhánh thử nghiệm chân thật
+        self.styles = {"pixel": _load("bible/style.yaml"), "hd": _load("bible/style_hd.yaml")}
+        self.style = self.styles["pixel"]
         ents = _load("bible/entities.yaml")
         self.entities = ents.get("entities", {})
         self.zones = ents.get("zones", {})
@@ -27,12 +29,24 @@ class Context:
         self.cand_dir = ROOT / p["candidates"]
         self.log_path = ROOT / p["log"]
         self.art_root = (ROOT / p["unity_art_root"]).resolve()
+        self.art_hd_root = (ROOT / p["unity_art_hd_root"]).resolve()
         self.audio_root = (ROOT / p["unity_audio_root"]).resolve()
         self.calls = 0
 
+    # ---- phong cách ----
+    @staticmethod
+    def style_name(a):
+        return a.get("style", "pixel")
+
+    def art(self, a):
+        return self.styles[self.style_name(a)]["art"]
+
     # ---- refs (anchors) ----
-    def style_ref(self):
-        f = self.refs_dir / "_style.png"
+    def _style_file(self, style):
+        return self.refs_dir / ("_style.png" if style == "pixel" else f"_style_{style}.png")
+
+    def style_ref(self, style="pixel"):
+        f = self._style_file(style)
         return f if f.exists() else None
 
     def entity_ref(self, entity):
@@ -47,11 +61,12 @@ class Context:
     def dest_path(self, a):
         """Đích cuối cùng của một asset sau khi duyệt."""
         if a["type"] == "style":
-            return self.refs_dir / "_style.png"
+            return self._style_file(self.style_name(a))
         if a["type"] == "anchor":
             return self.refs_dir / f"{a['entity']}.png"
-        root = self.audio_root if a["type"] in ("music", "voice", "sfx") else self.art_root
-        return root / a["out"]
+        if a["type"] in ("music", "voice", "sfx"):
+            return self.audio_root / a["out"]
+        return (self.art_hd_root if self.style_name(a) == "hd" else self.art_root) / a["out"]
 
     # ---- ngân sách ----
     def spend(self, n, allow_over):

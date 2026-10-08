@@ -1,0 +1,25 @@
+﻿# ART BIBLE — DevilBlade HD (thử nghiệm phong cách chân thật, u tối)
+# Song song với style.yaml (pixel). Asset dùng phong cách này khai báo `style: hd` trong manifest.
+# Không có khóa bảng màu như pixel => đồng nhất dựa vào: style tile HD + anchor nhân vật + bảng màu mô tả bằng lời.
+
+art:
+  style_prompt: >
+    Dark gothic realistic 2D game art, painterly concept-art realism in the vein of Bloodborne, Dark Souls and
+    Blasphemous 2 key art. Grim, eerie, haunted atmosphere. Chiaroscuro lighting: a single cold moonlight rim light
+    from the upper left, deep crushed shadows, faint volumetric fog. Heavily desaturated palette of charcoal black,
+    ash grey, bone white and cold slate blue; the ONLY saturated colors allowed are dried-blood crimson and, for
+    demonic elements only, smouldering ember red and sickly hellfire glow. Weathered, worn, tattered materials with
+    fine texture detail, sharp clean silhouette readable at small size.
+  view: strict side view profile facing right, orthographic 2D game sprite framing, full body, no perspective distortion
+  negative_prompt: >
+    no text, no letters, no watermark, no signature, no UI, no frame border, no cast shadow on the background,
+    no ground plane, no bright saturated colors, no cartoon, no anime cel shading, no chibi proportions,
+    no pixel art, no clean shiny armor, no heroic smile,
+    no background fog, haze or smoke clouds detached from the character (smoke and embers only clinging to the body)
+  background_key: "#00FF00"   # nền xanh lá đặc để tách (đỏ/đen của nhân vật không trùng với xanh lá)
+
+  hd:
+    ppu: 100                   # PPU dự kiến nếu đưa vào Unity
+    hero_height: 360           # chiều cao Kael (px) khi xuất sprite, đủ nét ở 1080p
+    color_words: >
+      charcoal black, ash grey, bone white, cold slate blue, dried-blood crimson, smouldering ember red

@@ -16,12 +16,12 @@ def anim_layout(frames):
 
 def image_job(ctx: Context, a):
     """Trả về (prompt, refs[list[(Path, vai trò)]], aspect_ratio)."""
-    art = ctx.style["art"]
+    art = ctx.art(a)
     key = art["background_key"]
     refs = []
-    style = ctx.style_ref()
+    style = ctx.style_ref(ctx.style_name(a))
     if style and a["type"] != "style":
-        refs.append((style, "reference for art style, palette, outline and shading ONLY — match that look but do not copy its layout or content"))
+        refs.append((style, "reference for art style, palette, lighting and rendering ONLY — match that look but do not copy its layout or content"))
 
     ent = ctx.entities.get(a.get("entity")) if a.get("entity") else None
     if ent:
@@ -58,6 +58,12 @@ def image_job(ctx: Context, a):
             f"no part of a frame (including the weapon or effects) touches or crosses into a neighbouring cell. "
             f"Solid flat {key} background, no ground, no shadow, no frame numbers."
         )
+    elif t == "parts":
+        parts.append(
+            f"{_clean(a['prompt'])} Character: {ent['name']} — {_clean(ent['description'])} "
+            f"Solid flat {key} background everywhere between the parts, no labels, no numbers, no arrows, no shadows."
+        )
+        aspect = "16:9"
     elif t == "tileset":
         parts.append(
             f"Zone: {_clean(zone['description'])} {_clean(a['prompt'])} "

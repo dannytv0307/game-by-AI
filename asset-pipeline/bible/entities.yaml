@@ -50,6 +50,40 @@ entities:
       massive horned helm, carries a huge jagged cleaver and a tattered crimson banner. First boss.
     voice: { name: Fenrir, direction: "deep, ancient, contemptuous", fx: demon }
 
+  # ---------- Phong cách HD u tối (thử nghiệm) ----------
+  hero_hd:
+    name: Kael
+    kind: character
+    style: hd
+    height_px: 360
+    description: >
+      Gaunt, haunted human swordsman in his late twenties, ashen pale skin stretched over sharp cheekbones, sunken
+      sleepless eyes with a faint dried-blood red glint in the irises, long matted black hair partly covering the face.
+      Black veins of demon blood crawl from his left hand up the forearm and neck like cracks in porcelain.
+      Wears a tattered, rain-soaked black hooded mantle over a frayed charcoal leather coat to the knees, a single
+      rusted dark-steel pauldron on the left shoulder engraved with a faded holy sigil, blood-stained bandages wrapping
+      both forearms, worn heavy boots. Wields a long single-edged greatsword, its blade blackened and nicked, hilt
+      wrapped in crimson cloth. Faint pale smoke wisps trail from the black veins. Expression: cold, exhausted, grim.
+    voice: { name: Charon, direction: "low, hoarse, haunted young man" }
+
+  hero_demon_hd:
+    name: Kael (Demon Form)
+    kind: character
+    style: hd
+    height_px: 420
+    based_on: hero_hd
+    description: >
+      Kael's body horror demon transformation, terrifying and unholy. Taller and emaciated with unnaturally elongated
+      limbs and a hunched, broken posture. Skin charred black and split by deep cracks that reveal molten crimson
+      flesh glowing from within. Asymmetric horns have torn through the skull, one huge curling ram horn and one
+      broken jagged horn; small bone spurs erupt along the spine and shoulders. The lower jaw is split open with
+      rows of needle teeth, eyes are burning white-hot pinpoints with no pupils. The tattered mantle has become
+      living shadow, ragged smoke-wings trailing embers. Clawed fingers are fused into the greatsword, which has
+      mutated into a jagged blade of black bone with a molten crimson edge, dripping black ichor.
+      Still recognisably Kael: same mantle remnants, same left-shoulder pauldron now fused into the flesh, same
+      crimson hilt cloth. Unsettling silhouette, dread-inducing, never heroic.
+    voice: { name: Charon, direction: "same man, inhuman, layered growl and whisper", fx: demon }
+
 zones:
   ruined_village:
     description: >
