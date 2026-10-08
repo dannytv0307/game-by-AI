@@ -84,6 +84,37 @@ entities:
       crimson hilt cloth. Unsettling silhouette, dread-inducing, never heroic.
     voice: { name: Charon, direction: "same man, inhuman, layered growl and whisper", fx: demon }
 
+  imp_hd:
+    name: Imp
+    kind: enemy
+    style: hd
+    height_px: 200
+    description: >
+      Small emaciated demon the size of a child, ash-grey leathery skin stretched over visible ribs, cracked with faint
+      ember-red veins, oversized bony clawed hands, torn membranous bat wings, one broken horn, a wide lipless grin of
+      needle teeth, milky white blind eyes. Hunched, twitchy, feral.
+
+  hellhound_hd:
+    name: Hellhound
+    kind: enemy
+    style: hd
+    height_px: 230
+    description: >
+      Gaunt skeletal demon hound, patchy charcoal hide torn open to show raw dark-red muscle and blackened ribs with
+      embers smouldering inside the ribcage, elongated skull-like snout dripping black saliva, a ridge of bone spikes
+      along the spine, burning ember eyes.
+
+  demon_knight_hd:
+    name: Fallen Demon Knight
+    kind: boss
+    style: hd
+    height_px: 560
+    description: >
+      Towering fallen knight corrupted by demons, corroded black-iron plate armour grown into rotting flesh, sickly
+      violet hellfire leaking from the joints and visor slits, a massive horned great helm, a huge jagged butcher cleaver
+      blade notched and stained, a tattered blood-red war banner on a broken pole strapped to the back. Ancient, heavy,
+      oppressive.
+
 zones:
   ruined_village:
     description: >

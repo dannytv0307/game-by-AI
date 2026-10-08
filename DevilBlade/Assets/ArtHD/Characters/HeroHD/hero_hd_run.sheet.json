@@ -1,0 +1,10 @@
+{
+  "frames": 4,
+  "cell_w": 416,
+  "cell_h": 376,
+  "pivot": [
+    0.5,
+    0.0106
+  ],
+  "requested_frames": 4
+}

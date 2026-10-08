@@ -1,4 +1,4 @@
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
@@ -14,7 +14,7 @@ namespace DevilBlade.EditorTools
         {
             var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {
-                scenes = new[] { Level1Builder.ScenePath },
+                scenes = new[] { Level1Builder.ScenePath, Level1Builder.ScenePathHD }, // Tab trong game để đổi Pixel/HD
                 locationPathName = WindowsExe,
                 target = BuildTarget.StandaloneWindows64,
                 options = BuildOptions.None,

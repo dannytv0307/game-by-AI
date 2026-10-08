@@ -1,4 +1,4 @@
-﻿# Danh sách asset của game. Mỗi id là duy nhất; output được đặt theo id.
+# Danh sách asset của game. Mỗi id là duy nhất; output được đặt theo id.
 # Loại:
 #   anchor     – tấm tham chiếu nhân vật/thực thể -> refs/<entity>.png (gen TRƯỚC mọi asset khác của entity)
 #   style      – style tile tổng -> refs/_style.png (gen ĐẦU TIÊN, gửi kèm mọi ảnh)
@@ -185,6 +185,7 @@ assets:
 
   - id: hero_hd_attack_pose
     type: sprite
+    height_px: 400
     style: hd
     entity: hero_hd
     action: dynamic mid-swing key pose of a brutal horizontal greatsword slash, mantle whipping, a faint pale slash trail
@@ -192,6 +193,7 @@ assets:
 
   - id: hero_hd_transform_pose
     type: sprite
+    height_px: 430
     style: hd
     entity: hero_demon_hd
     action: >
@@ -201,6 +203,7 @@ assets:
 
   - id: hero_demon_hd_attack_pose
     type: sprite
+    height_px: 540
     style: hd
     entity: hero_demon_hd
     action: monstrous overhead smash with the bone greatsword, crimson fire arc and black ichor spray, jaw split open roaring
@@ -217,3 +220,74 @@ assets:
       houses and a broken church bell tower, cold fog, distant fires, no characters, lower fifth of the image is a
       dark cobblestone ground plane suitable for characters to stand on
     out: Backgrounds/VillageHD/village_hd_bg.png
+
+  # ----- HD: bổ sung để ráp thành màn chơi Level1_HD -----
+  - { id: imp_hd_anchor,          type: anchor, style: hd, entity: imp_hd }
+  - { id: hellhound_hd_anchor,    type: anchor, style: hd, entity: hellhound_hd }
+  - { id: demon_knight_hd_anchor, type: anchor, style: hd, entity: demon_knight_hd }
+
+  - id: hero_hd_run
+    type: anim
+    style: hd
+    entity: hero_hd
+    frames: 4
+    action: running cycle with long strides, legs clearly in different positions in every frame, greatsword held low behind, mantle streaming back
+    out: Characters/HeroHD/hero_hd_run.png
+  - id: hero_hd_jump_pose
+    type: sprite
+    height_px: 330
+    style: hd
+    entity: hero_hd
+    action: airborne mid-jump pose, knees tucked, mantle flaring upward, greatsword held back
+    out: Characters/HeroHD/hero_hd_jump_pose.png
+  - id: hero_hd_hurt_pose
+    type: sprite
+    style: hd
+    entity: hero_hd
+    action: staggering backwards after being struck, recoiling in pain, one hand clutching the chest
+    out: Characters/HeroHD/hero_hd_hurt_pose.png
+  - id: hero_demon_hd_idle_pose
+    type: sprite
+    height_px: 420
+    style: hd
+    entity: hero_demon_hd
+    action: menacing hunched combat stance, bone greatsword dragging, claws twitching, embers and smoke rising
+    out: Characters/HeroDemonHD/hero_demon_hd_idle_pose.png
+
+  - id: imp_hd_run_pose
+    type: sprite
+    style: hd
+    entity: imp_hd
+    action: skittering forward on all fours, claws reaching ahead
+    out: Enemies/ImpHD/imp_hd_run_pose.png
+  - id: imp_hd_attack_pose
+    type: sprite
+    height_px: 230
+    style: hd
+    entity: imp_hd
+    action: leaping pounce with both claws raised to slash, wings spread
+    out: Enemies/ImpHD/imp_hd_attack_pose.png
+  - id: hellhound_hd_run_pose
+    type: sprite
+    style: hd
+    entity: hellhound_hd
+    action: full-speed lunging gallop, jaws open, embers trailing from the mouth
+    out: Enemies/HellhoundHD/hellhound_hd_run_pose.png
+  - id: demon_knight_hd_idle_pose
+    type: sprite
+    style: hd
+    entity: demon_knight_hd
+    action: looming battle stance facing right, cleaver held low in one hand, violet fire leaking from the armour
+    out: Enemies/DemonKnightHD/demon_knight_hd_idle_pose.png
+
+  - id: village_hd_tiles
+    type: tileset
+    style: hd
+    zone: ruined_village
+    cols: 4
+    rows: 2
+    prompt: >
+      Top row: two dark wet cobblestone ground tiles with a worn top edge (left one cracked, right one with moss),
+      then two charred wooden plank bridge tiles. Bottom row: two dark packed earth and rubble fill tiles, then two
+      broken masonry rubble decoration pieces.
+    out: Tiles/VillageHD/village_hd_tiles.png

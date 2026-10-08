@@ -21,5 +21,6 @@ art:
   hd:
     ppu: 100                   # PPU dự kiến nếu đưa vào Unity
     hero_height: 360           # chiều cao Kael (px) khi xuất sprite, đủ nét ở 1080p
+    tile: 256                  # 1 ô tilemap = 256px = 1 unit (PPU 256 cho thư mục Tiles)
     color_words: >
       charcoal black, ash grey, bone white, cold slate blue, dried-blood crimson, smouldering ember red

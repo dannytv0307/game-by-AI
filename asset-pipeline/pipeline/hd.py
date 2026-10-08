@@ -1,11 +1,11 @@
-"""Hậu kỳ cho phong cách HD (chân thật): tách nền mềm, khử viền màu nền, cắt sát, thu nhỏ chất lượng cao.
+﻿"""Hậu kỳ cho phong cách HD (chân thật): tách nền mềm, khử viền màu nền, cắt sát, thu nhỏ chất lượng cao.
 Khác pixel: giữ alpha mềm (tóc, khói), không khóa bảng màu."""
 import math
 
 import numpy as np
 from PIL import Image
 
-from .pixel import _bbox, _erode, _label, _upsample, hex_to_rgb, load, split_frames
+from .pixel import _bbox, _erode, _foot_x, _label, _upsample, hex_to_rgb, load, split_frames
 
 
 def soft_key(img, key_hex, inner=45.0, outer=120.0, band=6):
@@ -69,14 +69,23 @@ def process_anim(raw, key_hex, target_h, frames, cols, rows):
     for b, m in zip(boxes, masks):
         c = _crop(rgba * np.dstack([np.ones(mask.shape + (3,)), m[..., None]]), b, pad=0)
         small.append(_resize_rgba(c, (max(1, round(c.shape[1] * scale)), max(1, round(c.shape[0] * scale)))))
-    cw = int(math.ceil(max(s.shape[1] for s in small) / 8) * 8) + 8
-    ch = int(math.ceil(max(s.shape[0] for s in small) / 8) * 8) + 8
+    # căn theo chân (không theo khung bao) để kiếm/áo choàng chìa ra không làm nhân vật trượt qua lại giữa các frame
+    feet = [_foot_x(s[..., 3] > 128) for s in small]
+    half = max(max(fx, s.shape[1] - fx) for fx, s in zip(feet, small))
+    cw = int(math.ceil((2 * half + 8) / 8) * 8)
+    ch = int(math.ceil((max(s.shape[0] for s in small) + 8) / 8) * 8)
     sheet = np.zeros((ch, cw * len(small), 4), dtype=np.uint8)
-    for i, s in enumerate(small):
+    for i, (s, fx) in enumerate(zip(small, feet)):
         sh, sw = s.shape[:2]
-        x = i * cw + (cw - sw) // 2
+        x = i * cw + cw // 2 - fx
         sheet[ch - sh - 4:ch - 4, x:x + sw] = s
     return sheet, {"frames": len(small), "cell_w": cw, "cell_h": ch, "pivot": [0.5, round(4 / ch, 4)], "requested_frames": frames}
+
+
+def sprite_pivot_meta(arr):
+    """Sprite đơn: pivot đặt tại chân (đo từ 15% dưới cùng) → *.sheet.json một frame cho importer Unity."""
+    h, w = arr.shape[:2]
+    return {"frames": 1, "cell_w": w, "cell_h": h, "pivot": [round(_foot_x(arr[..., 3] > 128) / w, 4), 0.0]}
 
 
 def process_parts(raw, key_hex, min_area_ratio=0.004):
@@ -98,6 +107,16 @@ def process_parts(raw, key_hex, min_area_ratio=0.004):
         pieces.append((bb, _crop(part, bb).astype(np.uint8)))
     pieces.sort(key=lambda p: (p[0][1] // 200, p[0][0]))
     return pieces
+
+
+def process_tileset(raw, key_hex, tile, cols, rows):
+    """Lưới tile HD: tách nền nếu mô hình dùng đúng nền khóa (đo ở viền ảnh), rồi resize về cols*tile x rows*tile."""
+    img = load(raw)
+    a = np.asarray(img, dtype=np.float64)
+    border = np.concatenate([a[0], a[-1], a[:, 0], a[:, -1]])
+    keyed = np.mean(np.linalg.norm(border - hex_to_rgb(key_hex), axis=1) < 90) > 0.3
+    rgba = soft_key(img, key_hex) if keyed else np.dstack([a, np.full(a.shape[:2], 255.0)])
+    return _resize_rgba(rgba, (cols * tile, rows * tile))
 
 
 def process_background(raw, width, height):

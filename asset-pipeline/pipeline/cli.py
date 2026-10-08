@@ -103,7 +103,11 @@ def _postprocess_hd(ctx, a, out, k):
     meta = {}
     try:
         if t in ("anchor", "sprite"):
-            hd.save(hd.process_sprite(raw, key, ent["height_px"] * (2 if t == "anchor" else 1)), out / f"{k}.png")
+            # tư thế giơ kiếm/nhảy có khung bao cao hơn dáng đứng => manifest có thể ghi đè height_px để giữ đúng tỉ lệ thân người
+            arr = hd.process_sprite(raw, key, ent["height_px"] * 2 if t == "anchor" else a.get("height_px", ent["height_px"]))
+            hd.save(arr, out / f"{k}.png")
+            if t == "sprite":
+                meta = hd.sprite_pivot_meta(arr)
         elif t == "anim":
             cols, rows, _ = prompts.anim_layout(a["frames"])
             arr, meta = hd.process_anim(raw, key, ent["height_px"], a["frames"], cols, rows)
@@ -119,6 +123,8 @@ def _postprocess_hd(ctx, a, out, k):
             print(f"  → tách được {len(pieces)} bộ phận")
         elif t == "background":
             hd.save(hd.process_background(raw, a["width"], a["height"]), out / f"{k}.png", checker_preview=False)
+        elif t == "tileset":
+            hd.save(hd.process_tileset(raw, key, art["hd"]["tile"], a["cols"], a["rows"]), out / f"{k}.png")
         elif t == "style":
             pass  # style tile dùng ảnh gốc làm tham chiếu
     except Exception as e:
@@ -211,7 +217,8 @@ def cmd_approve(ctx, args):
     if parts_dir.exists():  # các bộ phận đã tách để rig
         shutil.copytree(parts_dir, dest.with_name(dest.stem.removesuffix("_parts") + "_pieces"), dirs_exist_ok=True)
     side = run / f"{k}.json"
-    if side.exists():  # thông tin cắt sprite sheet cho Unity importer
+    # thông tin cắt sprite sheet / pivot cho Unity importer (chỉ khi json mô tả frame)
+    if side.exists() and "frames" in json.loads(side.read_text(encoding="utf-8")):
         shutil.copy2(side, dest.with_suffix(".sheet.json"))
     ctx.log(id=a["id"], type=a["type"], action="approve", source=str(src), dest=str(dest), sha1=sha1(dest))
     print(f"✔ {a['id']} → {dest}")

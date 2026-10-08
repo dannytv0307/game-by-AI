@@ -12,14 +12,19 @@ namespace DevilBlade.Tests
     /// Chạy riêng: -runTests -testPlatform PlayMode -testCategory Capture
     /// </summary>
     [Category("Capture")]
+    [TestFixture("Level1")]
+    [TestFixture("Level1_HD")]
     public class Level1CaptureTests
     {
+        readonly string _scene;
+        public Level1CaptureTests(string scene) => _scene = scene;
+
         static IEnumerator Wait(float s)
         {
             for (float t = 0; t < s; t += Time.deltaTime) yield return null;
         }
 
-        static void Shot(string name)
+        void Shot(string name)
         {
             var cam = Camera.main;
             var canvas = Object.FindAnyObjectByType<Canvas>();
@@ -36,7 +41,7 @@ namespace DevilBlade.Tests
             tex.ReadPixels(new Rect(0, 0, 1280, 720), 0, 0);
             tex.Apply();
             Directory.CreateDirectory("Logs/Screens");
-            File.WriteAllBytes($"Logs/Screens/play_{name}.png", tex.EncodeToPNG());
+            File.WriteAllBytes($"Logs/Screens/{_scene}_{name}.png", tex.EncodeToPNG());
             RenderTexture.active = null;
             cam.targetTexture = null;
             canvas.renderMode = prevMode;
@@ -47,7 +52,7 @@ namespace DevilBlade.Tests
         [UnityTest]
         public IEnumerator Capture_Key_Moments()
         {
-            SceneManager.LoadScene("Level1");
+            SceneManager.LoadScene(_scene);
             yield return Wait(1.2f);
             var player = Object.FindAnyObjectByType<PlayerController>();
             Shot("01_start");

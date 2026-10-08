@@ -51,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 170
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -72,10 +72,10 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 4096
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -105,17 +105,17 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 370
-        height: 420
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 476
+        height: 540
+      alignment: 9
+      pivot: {x: 0.7122, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 58059cfbfcbc43b40800000000000000
+      spriteID: a34b85ec5c30ea2372bf5e9c578ad14f
       internalID: 5419180344769859717
       vertices: []
       indices: 
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: ed3dba32851c83c4fb22b15ef4f5dc43
     internalID: 0
     vertices: []
     indices: 

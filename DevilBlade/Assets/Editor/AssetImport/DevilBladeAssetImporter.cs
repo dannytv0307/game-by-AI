@@ -32,35 +32,57 @@ namespace DevilBlade.EditorTools
             public float[] pivot;
         }
 
+        // Nhánh thử nghiệm HD (asset-pipeline/bible/style_hd.yaml). Kích thước trong thế giới giữ như bản pixel:
+        // Kael HD 360px ≈ 2.1 unit, 1 tile 256px = 1 unit, nền 1920px ≈ 20 unit.
+        const string ArtHdRoot = "Assets/ArtHD/";
+        const int HdCharacterPPU = 170;
+        const int HdTileSize = 256;
+        const int HdBackgroundPPU = 96;
+
         void OnPreprocessTexture()
         {
-            if (!assetPath.StartsWith(ArtRoot)) return;
+            var hd = assetPath.StartsWith(ArtHdRoot);
+            if (!hd && !assetPath.StartsWith(ArtRoot)) return;
+            var root = hd ? ArtHdRoot : ArtRoot;
+            var tileSize = hd ? HdTileSize : TileSize;
             var ti = (TextureImporter)assetImporter;
             ti.textureType = TextureImporterType.Sprite;
-            ti.spritePixelsPerUnit = PixelsPerUnit;
-            ti.filterMode = FilterMode.Point;
+            ti.spritePixelsPerUnit = !hd ? PixelsPerUnit
+                : assetPath.StartsWith(root + "Tiles/") ? HdTileSize
+                : assetPath.StartsWith(root + "Backgrounds/") ? HdBackgroundPPU
+                : HdCharacterPPU;
+            ti.filterMode = hd ? FilterMode.Bilinear : FilterMode.Point;
             ti.textureCompression = TextureImporterCompression.Uncompressed;
             ti.mipmapEnabled = false;
             ti.alphaIsTransparency = true;
             ti.wrapMode = TextureWrapMode.Clamp;
+            if (hd) ti.maxTextureSize = 4096;
 
             var sheetPath = Path.ChangeExtension(assetPath, ".sheet.json");
-            if (File.Exists(sheetPath))
+            var meta = File.Exists(sheetPath) ? JsonUtility.FromJson<SheetMeta>(File.ReadAllText(sheetPath)) : null;
+            if (meta is { frames: > 0, pivot: { Length: 2 } })
             {
-                var meta = JsonUtility.FromJson<SheetMeta>(File.ReadAllText(sheetPath));
                 var pivot = new Vector2(meta.pivot[0], meta.pivot[1]);
                 ti.spriteImportMode = SpriteImportMode.Multiple;
                 SliceGrid(ti, meta.cell_w, meta.cell_h, meta.frames, 1, pivot);
             }
-            else if (assetPath.StartsWith(ArtRoot + "Tiles/"))
+            else if (assetPath.StartsWith(root + "Tiles/"))
             {
                 ti.spriteImportMode = SpriteImportMode.Multiple;
                 var (w, h) = TextureSize(ti);
-                SliceGrid(ti, TileSize, TileSize, w / TileSize, h / TileSize, new Vector2(0.5f, 0.5f));
+                SliceGrid(ti, tileSize, tileSize, w / tileSize, h / tileSize, new Vector2(0.5f, 0.5f));
             }
             else
             {
                 ti.spriteImportMode = SpriteImportMode.Single;
+                if (hd && !assetPath.StartsWith(root + "Backgrounds/"))
+                {
+                    // sprite đơn của nhân vật: pivot ở chân (đáy-giữa) để khớp collider & mặt đất
+                    var s = new TextureImporterSettings();
+                    ti.ReadTextureSettings(s);
+                    s.spriteAlignment = (int)SpriteAlignment.BottomCenter;
+                    ti.SetTextureSettings(s);
+                }
             }
         }
 
@@ -144,7 +166,7 @@ namespace DevilBlade.EditorTools
         {
             foreach (var p in imported)
             {
-                if (!p.StartsWith(ArtRoot) || !p.EndsWith(".sheet.json")) continue;
+                if (!(p.StartsWith(ArtRoot) || p.StartsWith(ArtHdRoot)) || !p.EndsWith(".sheet.json")) continue;
                 var png = p.Substring(0, p.Length - ".sheet.json".Length) + ".png";
                 if (File.Exists(png)) AssetDatabase.ImportAsset(png, ImportAssetOptions.ForceUpdate);
             }

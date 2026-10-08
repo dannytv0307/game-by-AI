@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
@@ -8,8 +8,13 @@ using UnityEngine.TestTools;
 namespace DevilBlade.Tests
 {
     /// <summary>Kiểm thử khói cho màn 1: vật lý, di chuyển, chém, hóa quỷ, hồi sinh, đấu boss.</summary>
+    [TestFixture("Level1")]
+    [TestFixture("Level1_HD")]
     public class Level1Tests
     {
+        readonly string _scene;
+        public Level1Tests(string scene) => _scene = scene;
+
         PlayerController _player;
         GameManager _gm;
 
@@ -17,7 +22,7 @@ namespace DevilBlade.Tests
         public IEnumerator LoadLevel()
         {
             Time.timeScale = 1f;
-            SceneManager.LoadScene("Level1");
+            SceneManager.LoadScene(_scene);
             yield return null;
             yield return null;
             _player = Object.FindAnyObjectByType<PlayerController>();

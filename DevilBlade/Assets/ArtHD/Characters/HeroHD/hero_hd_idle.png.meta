@@ -60,7 +60,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 170
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -81,10 +81,10 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 4096
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -112,19 +112,19 @@ TextureImporter:
       name: hero_hd_idle_0
       rect:
         serializedVersion: 2
-        x: 6
-        y: 3
-        width: 171
-        height: 362
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 0
+        y: 0
+        width: 232
+        height: 368
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0109}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 86fc24e0486b65570800000000000000
+      spriteID: c8e061a53012e631efcaacc31ed7ca11
       internalID: 8455146028725882728
       vertices: []
       indices: 
@@ -134,19 +134,19 @@ TextureImporter:
       name: hero_hd_idle_1
       rect:
         serializedVersion: 2
-        x: 190
-        y: 3
-        width: 171
-        height: 362
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 232
+        y: 0
+        width: 232
+        height: 368
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0109}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: e894c5d17e9e909e0800000000000000
+      spriteID: 2a0cd68edab649803a8d01bf0747c498
       internalID: -1654534209242642034
       vertices: []
       indices: 
@@ -156,19 +156,19 @@ TextureImporter:
       name: hero_hd_idle_2
       rect:
         serializedVersion: 2
-        x: 374
-        y: 3
-        width: 171
-        height: 362
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 464
+        y: 0
+        width: 232
+        height: 368
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0109}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 9d42f801ee6dbc510800000000000000
+      spriteID: a1e2ec6f394ecdf7e9cddb61a7a58c7a
       internalID: 1570585213037126873
       vertices: []
       indices: 
@@ -178,19 +178,19 @@ TextureImporter:
       name: hero_hd_idle_3
       rect:
         serializedVersion: 2
-        x: 558
-        y: 3
-        width: 171
-        height: 362
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 696
+        y: 0
+        width: 232
+        height: 368
+      alignment: 9
+      pivot: {x: 0.5, y: 0.0109}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: ec9c1060dc6b6e0f0800000000000000
+      spriteID: 67235b32e8fda414e7801a8a86f041c5
       internalID: -1087981268278064690
       vertices: []
       indices: 
@@ -200,7 +200,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: dee00647028f9fd4badfdea3d68eb0a4
     internalID: 0
     vertices: []
     indices: 

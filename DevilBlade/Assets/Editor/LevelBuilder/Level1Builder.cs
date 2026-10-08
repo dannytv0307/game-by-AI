@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DevilBlade;
@@ -20,9 +20,112 @@ namespace DevilBlade.EditorTools
     public static class Level1Builder
     {
         public const string ScenePath = "Assets/Scenes/Level1.unity";
-        const string Art = "Assets/Art/";
-        const string TilesDir = "Assets/Tiles/Village/";
+        public const string ScenePathHD = "Assets/Scenes/Level1_HD.unity";
         const string UnlitMat = "Packages/com.unity.render-pipelines.universal/Runtime/Materials/Sprite-Unlit-Default.mat";
+
+        // ---------------- SKIN: cùng bố cục màn, khác bộ đồ họa ----------------
+        class Skin
+        {
+            public string Name, ScenePath, ArtRoot, TilesDir, TilesSheet;
+            public int[] GroundTop, GroundFill, Platform, Decor, Gate;
+            public int CheckpointTile;
+            public Vector3 CheckpointOffset, CheckpointScale = Vector3.one;
+            public bool PixelPerfect, ProceduralMotion;
+            public Color GroundTint = Color.white;
+            public (string sprite, float fx, float fy, float baseY, int order, Color tint, float scale)[] Backgrounds;
+            public System.Func<List<SpriteAnimator.Clip>> Player;
+            public System.Func<Dictionary<string, (Sprite[] f, float fps, bool loop)>> Imp, Hound, Boss;
+        }
+
+        static Skin S; // skin đang dựng
+
+        static Sprite[] Repeat(Sprite[] s, int n) => Enumerable.Repeat(s[0], n).ToArray();
+
+        static readonly Skin Pixel = new()
+        {
+            Name = "Pixel", ScenePath = ScenePath, ArtRoot = "Assets/Art/",
+            TilesDir = "Assets/Tiles/Village/", TilesSheet = "Tiles/Village/village_tiles.png",
+            GroundTop = new[] { 0, 1, 2 }, GroundFill = new[] { 6, 7 }, Platform = new[] { 18, 19 },
+            Decor = new[] { 9, 10, 11 }, Gate = new[] { 4, 5 }, CheckpointTile = 23, CheckpointOffset = new Vector3(0, 0.5f, 0),
+            PixelPerfect = true,
+            Backgrounds = new[]
+            {
+                ("Backgrounds/Village/village_bg_far.png", 0.9f, 0.95f, 6f, -100, new Color(0.45f, 0.45f, 0.58f), 1.35f), // phóng to để luôn phủ kín khung hình
+                ("Backgrounds/Village/village_bg_mid.png", 0.6f, 0.75f, 5f, -90, new Color(0.62f, 0.6f, 0.72f), 1f),
+            },
+            Player = () =>
+            {
+                var jump = Sheet("Characters/Hero/hero_jump.png");
+                return new List<SpriteAnimator.Clip>
+                {
+                    Clip("idle", Sheet("Characters/Hero/hero_idle.png"), 6),
+                    Clip("run", Sheet("Characters/Hero/hero_run.png"), 12),
+                    Clip("jump", new[] { jump[Mathf.Min(1, jump.Length - 1)] }, 1),
+                    Clip("fall", new[] { jump[jump.Length - 1] }, 1),
+                    Clip("attack", Sheet("Characters/Hero/hero_attack1.png"), 14, false),
+                    Clip("hurt", Sheet("Characters/Hero/hero_hurt.png"), 8, false),
+                    Clip("transform", Sheet("Characters/Hero/hero_transform.png"), 8, false),
+                    Clip("d_idle", Sheet("Characters/HeroDemon/hero_demon_idle.png"), 7),
+                    Clip("d_attack", Sheet("Characters/HeroDemon/hero_demon_attack.png"), 15, false),
+                };
+            },
+            Imp = () => new()
+            {
+                ["run"] = (Sheet("Enemies/Imp/imp_run.png"), 12, true),
+                ["attack"] = (Sheet("Enemies/Imp/imp_attack.png"), 10, false),
+            },
+            Hound = () =>
+            {
+                var run = Sheet("Enemies/Hellhound/hellhound_run.png");
+                return new() { ["idle"] = (new[] { run[0] }, 1, true), ["run"] = (run, 14, true) };
+            },
+            Boss = () => new() { ["idle"] = (Sheet("Enemies/DemonKnight/demon_knight_idle.png"), 5, true) },
+        };
+
+        // HD: phần lớn là tư thế tĩnh (AI vẽ từng frame chân thật không đồng nhất) + chuyển động thủ tục (ProceduralPoseMotion).
+        // Số frame lặp lại để giữ đúng thời điểm ra đòn (attackHitFrame) như bản pixel.
+        static readonly Skin HD = new()
+        {
+            Name = "HD", ScenePath = ScenePathHD, ArtRoot = "Assets/ArtHD/",
+            TilesDir = "Assets/Tiles/VillageHD/", TilesSheet = "Tiles/VillageHD/village_hd_tiles.png",
+            GroundTop = new[] { 0 }, GroundFill = new[] { 4 }, Platform = new[] { 2, 3 }, GroundTint = new Color(0.62f, 0.6f, 0.66f), // 1 biến thể + tối bớt => đỡ lộ đường nối ô
+            Decor = new int[0], Gate = new[] { 2, 3 }, CheckpointTile = 6,
+            CheckpointOffset = new Vector3(0, 0.5f, 0), CheckpointScale = new Vector3(1.4f, 1.4f, 1),
+            ProceduralMotion = true,
+            Backgrounds = new[]
+            {
+                ("Backgrounds/VillageHD/village_hd_bg.png", 0.85f, 0.9f, 6.5f, -100, new Color(0.62f, 0.62f, 0.7f), 1.35f),
+            },
+            Player = () =>
+            {
+                var idle = Sheet("Characters/HeroHD/hero_hd_idle.png");
+                var tr = Sheet("Characters/HeroHD/hero_hd_transform_pose.png");
+                var dIdle = Sheet("Characters/HeroDemonHD/hero_demon_hd_idle_pose.png");
+                return new List<SpriteAnimator.Clip>
+                {
+                    Clip("idle", idle, 3),
+                    Clip("run", Sheet("Characters/HeroHD/hero_hd_run.png"), 8),
+                    Clip("jump", Sheet("Characters/HeroHD/hero_hd_jump_pose.png"), 1),
+                    Clip("fall", Sheet("Characters/HeroHD/hero_hd_jump_pose.png"), 1),
+                    Clip("attack", Repeat(Sheet("Characters/HeroHD/hero_hd_attack_pose.png"), 5), 14, false),
+                    Clip("hurt", Repeat(Sheet("Characters/HeroHD/hero_hd_hurt_pose.png"), 2), 8, false),
+                    Clip("transform", new[] { idle[0] }.Concat(Repeat(tr, 4)).Concat(dIdle).ToArray(), 8, false),
+                    Clip("d_idle", dIdle, 1),
+                    Clip("d_attack", Repeat(Sheet("Characters/HeroDemonHD/hero_demon_hd_attack_pose.png"), 5), 15, false),
+                };
+            },
+            Imp = () => new()
+            {
+                ["run"] = (Sheet("Enemies/ImpHD/imp_hd_run_pose.png"), 1, true),
+                ["attack"] = (Repeat(Sheet("Enemies/ImpHD/imp_hd_attack_pose.png"), 4), 10, false),
+            },
+            Hound = () =>
+            {
+                var run = Sheet("Enemies/HellhoundHD/hellhound_hd_run_pose.png");
+                return new() { ["idle"] = (run, 1, true), ["run"] = (run, 1, true) };
+            },
+            Boss = () => new() { ["idle"] = (Sheet("Enemies/DemonKnightHD/demon_knight_hd_idle_pose.png"), 1, true) },
+        };
 
         // ---------------- LEVEL DATA ----------------
         // Đoạn nền đất: (x bắt đầu, x kết thúc — bao gồm, độ cao mặt đất)
@@ -54,9 +157,23 @@ namespace DevilBlade.EditorTools
         const float ArenaTriggerX = 101f;
         static readonly Rect CameraBounds = new(-4, -3, 140, 24);
 
-        [MenuItem("DevilBlade/Build Level 1")]
+        /// <summary>Dựng cả hai bản: Level1 (pixel, cảnh 0) và Level1_HD (thử nghiệm HD, cảnh 1). Tab trong game để đổi.</summary>
+        [MenuItem("DevilBlade/Build Level 1 (Pixel + HD)")]
         public static void Build()
         {
+            Build(Pixel);
+            Build(HD);
+            EditorBuildSettings.scenes = new[]
+            {
+                new EditorBuildSettingsScene(ScenePath, true),
+                new EditorBuildSettingsScene(ScenePathHD, true),
+            };
+            AssetDatabase.SaveAssets();
+        }
+
+        static void Build(Skin skin)
+        {
+            S = skin;
             SetupLayers();
             SetupPlayerSettings();
             var white = EnsureWhiteSprite();
@@ -65,10 +182,10 @@ namespace DevilBlade.EditorTools
 
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
-            var audio = BuildAudio();
-            var cam = BuildCamera();
+            BuildAudio();
+            BuildCamera();
             BuildBackgrounds(unlit);
-            var grid = BuildTilemaps(tiles, unlit);
+            BuildTilemaps(tiles, unlit);
             var player = BuildPlayer(unlit);
             BuildEnemies(unlit, out var boss);
             BuildCheckpoints(tiles, unlit);
@@ -81,10 +198,8 @@ namespace DevilBlade.EditorTools
             gm.player = player;
             gm.hud = hud;
 
-            EditorSceneManager.SaveScene(scene, ScenePath);
-            EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
-            AssetDatabase.SaveAssets();
-            Debug.Log($"[Level1Builder] Đã dựng {ScenePath}");
+            EditorSceneManager.SaveScene(scene, skin.ScenePath);
+            Debug.Log($"[Level1Builder] Đã dựng {skin.ScenePath} ({skin.Name})");
         }
 
         public static void BuildHeadless()
@@ -125,7 +240,7 @@ namespace DevilBlade.EditorTools
 
         static Sprite EnsureWhiteSprite()
         {
-            const string path = Art + "UI/white.png";
+            const string path = "Assets/Art/UI/white.png"; // UI dùng chung cho mọi skin
             if (!File.Exists(path))
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(path)!);
@@ -139,7 +254,7 @@ namespace DevilBlade.EditorTools
 
         static Sprite[] Sheet(string path)
         {
-            var sprites = AssetDatabase.LoadAllAssetsAtPath(Art + path).OfType<Sprite>()
+            var sprites = AssetDatabase.LoadAllAssetsAtPath(S.ArtRoot + path).OfType<Sprite>()
                 .OrderBy(s => int.Parse(s.name.Substring(s.name.LastIndexOf('_') + 1))).ToArray();
             if (sprites.Length == 0) throw new System.Exception($"Không có sprite trong {path} — đã chạy asset-pipeline approve chưa?");
             return sprites;
@@ -147,12 +262,12 @@ namespace DevilBlade.EditorTools
 
         static Tile[] EnsureTiles()
         {
-            Directory.CreateDirectory(TilesDir);
-            var sprites = Sheet("Tiles/Village/village_tiles.png");
+            Directory.CreateDirectory(S.TilesDir);
+            var sprites = Sheet(S.TilesSheet);
             var tiles = new Tile[sprites.Length];
             for (var i = 0; i < sprites.Length; i++)
             {
-                var path = $"{TilesDir}village_{i:00}.asset";
+                var path = $"{S.TilesDir}village_{i:00}.asset";
                 var tile = AssetDatabase.LoadAssetAtPath<Tile>(path);
                 if (tile == null)
                 {
@@ -200,10 +315,13 @@ namespace DevilBlade.EditorTools
             cam.backgroundColor = new Color32(0x1f, 0x1a, 0x24, 255);
             go.AddComponent<AudioListener>();
             go.AddComponent<UniversalAdditionalCameraData>();
-            var ppc = go.AddComponent<PixelPerfectCamera>();
-            ppc.assetsPPU = 32;
-            ppc.refResolutionX = 640;
-            ppc.refResolutionY = 360;
+            if (S.PixelPerfect)
+            {
+                var ppc = go.AddComponent<PixelPerfectCamera>();
+                ppc.assetsPPU = 32;
+                ppc.refResolutionX = 640;
+                ppc.refResolutionY = 360;
+            }
             go.AddComponent<CinemachineBrain>();
             return cam;
         }
@@ -230,7 +348,7 @@ namespace DevilBlade.EditorTools
             bounds.layer = 2; // Ignore Raycast — không ảnh hưởng gameplay
             var confiner = go.AddComponent<CinemachineConfiner2D>();
             confiner.BoundingShape2D = poly;
-            go.AddComponent<CinemachinePixelPerfect>();
+            if (S.PixelPerfect) go.AddComponent<CinemachinePixelPerfect>();
         }
 
         // ================= nền =================
@@ -240,7 +358,7 @@ namespace DevilBlade.EditorTools
             {
                 var root = new GameObject(name);
                 var p = root.AddComponent<Parallax>();
-                var s = AssetDatabase.LoadAssetAtPath<Sprite>(Art + sprite);
+                var s = AssetDatabase.LoadAssetAtPath<Sprite>(S.ArtRoot + sprite);
                 p.width = s.bounds.size.x * scale;
                 p.factorX = fx;
                 p.factorY = fy;
@@ -259,8 +377,11 @@ namespace DevilBlade.EditorTools
                     sr.color = tint; // tối & lạnh hơn để nhân vật nổi bật trên nền
                 }
             }
-            Layer("BG_Far", "Backgrounds/Village/village_bg_far.png", 0.9f, 0.95f, 6f, -100, new Color(0.45f, 0.45f, 0.58f), 1.35f); // phóng to để luôn phủ kín khung hình
-            Layer("BG_Mid", "Backgrounds/Village/village_bg_mid.png", 0.6f, 0.75f, 5f, -90, new Color(0.62f, 0.6f, 0.72f), 1f);
+            for (var i = 0; i < S.Backgrounds.Length; i++)
+            {
+                var b = S.Backgrounds[i];
+                Layer($"BG_{i}", b.sprite, b.fx, b.fy, b.baseY, b.order, b.tint, b.scale);
+            }
         }
 
         // ================= tilemap =================
@@ -296,6 +417,7 @@ namespace DevilBlade.EditorTools
             }
 
             var ground = Map("Ground", 0, true, false);
+            ground.color = S.GroundTint;
             var platforms = Map("Platforms", 1, true, true);
             var decor = Map("Decor", 2, false, false);
             var rng = new System.Random(7);
@@ -305,16 +427,16 @@ namespace DevilBlade.EditorTools
                     for (var y = -8; y < h; y++)
                     {
                         var top = y == h - 1;
-                        var tile = top ? t[rng.Next(0, 3)] : t[6 + rng.Next(0, 2)];
+                        var tile = top ? t[Pick(S.GroundTop, rng)] : t[Pick(S.GroundFill, rng)];
                         ground.SetTile(new Vector3Int(x, y, 0), tile);
                     }
             foreach (var (x0, x1, y) in Platforms)
                 for (var x = x0; x <= x1; x++)
-                    platforms.SetTile(new Vector3Int(x, y, 0), t[18 + rng.Next(0, 2)]);
-            foreach (var x in Rubble)
+                    platforms.SetTile(new Vector3Int(x, y, 0), t[Pick(S.Platform, rng)]);
+            foreach (var x in S.Decor.Length > 0 ? Rubble : new int[0])
             {
                 var h = GroundSegments.First(s => x >= s.x0 && x <= s.x1).h;
-                decor.SetTile(new Vector3Int(x, h, 0), t[9 + rng.Next(0, 3)]);
+                decor.SetTile(new Vector3Int(x, h, 0), t[Pick(S.Decor, rng)]);
             }
             // Bắt buộc sinh hình va chạm ngay: nếu lưu scene khi composite còn rỗng, nhân vật sẽ rơi xuyên đất.
             foreach (var tc in grid.GetComponentsInChildren<TilemapCollider2D>()) tc.ProcessTilemapChanges();
@@ -325,6 +447,8 @@ namespace DevilBlade.EditorTools
             }
             return grid;
         }
+
+        static int Pick(int[] options, System.Random rng) => options[rng.Next(0, options.Length)];
 
         // ================= nhân vật =================
         static SpriteAnimator.Clip Clip(string name, Sprite[] frames, float fps, bool loop = true) =>
@@ -349,6 +473,7 @@ namespace DevilBlade.EditorTools
             sr.sharedMaterial = mat;
             sr.sortingOrder = order;
             anim = sprite.AddComponent<SpriteAnimator>();
+            if (S.ProceduralMotion) sprite.AddComponent<ProceduralPoseMotion>();
             go.AddComponent<HitFlash>();
             return go;
         }
@@ -366,19 +491,7 @@ namespace DevilBlade.EditorTools
         static PlayerController BuildPlayer(Material mat)
         {
             var go = Body("Player_Kael", PlayerSpawn, Layers.Player, mat, 10, new Vector2(0.7f, 1.75f), out var anim);
-            var jump = Sheet("Characters/Hero/hero_jump.png");
-            anim.clips = new List<SpriteAnimator.Clip>
-            {
-                Clip("idle", Sheet("Characters/Hero/hero_idle.png"), 6),
-                Clip("run", Sheet("Characters/Hero/hero_run.png"), 12),
-                Clip("jump", new[] { jump[Mathf.Min(1, jump.Length - 1)] }, 1),
-                Clip("fall", new[] { jump[jump.Length - 1] }, 1),
-                Clip("attack", Sheet("Characters/Hero/hero_attack1.png"), 14, false),
-                Clip("hurt", Sheet("Characters/Hero/hero_hurt.png"), 8, false),
-                Clip("transform", Sheet("Characters/Hero/hero_transform.png"), 8, false),
-                Clip("d_idle", Sheet("Characters/HeroDemon/hero_demon_idle.png"), 7),
-                Clip("d_attack", Sheet("Characters/HeroDemon/hero_demon_attack.png"), 15, false),
-            };
+            anim.clips = S.Player();
             anim.GetComponent<SpriteRenderer>().sprite = anim.clips[0].frames[0];
             var health = go.AddComponent<Health>();
             health.max = 100;
@@ -402,11 +515,7 @@ namespace DevilBlade.EditorTools
 
         static ImpEnemy CreateImp(Vector2 pos, Material mat, Transform parent)
         {
-            var imp = Enemy<ImpEnemy>("Imp", pos, mat, new Vector2(0.8f, 0.95f), 30, new()
-            {
-                ["run"] = (Sheet("Enemies/Imp/imp_run.png"), 12, true),
-                ["attack"] = (Sheet("Enemies/Imp/imp_attack.png"), 10, false),
-            });
+            var imp = Enemy<ImpEnemy>("Imp", pos, mat, new Vector2(0.8f, 0.95f), 30, S.Imp());
             imp.rageReward = 4;
             imp.transform.SetParent(parent, true);
             return imp;
@@ -416,23 +525,15 @@ namespace DevilBlade.EditorTools
         {
             var root = new GameObject("Enemies").transform;
             foreach (var p in Imps) CreateImp(p, mat, root);
-            var houndRun = Sheet("Enemies/Hellhound/hellhound_run.png");
             foreach (var p in Hounds)
             {
-                var h = Enemy<HellhoundEnemy>("Hellhound", p, mat, new Vector2(1.6f, 1.0f), 50, new()
-                {
-                    ["idle"] = (new[] { houndRun[0] }, 1, true),
-                    ["run"] = (houndRun, 14, true),
-                });
+                var h = Enemy<HellhoundEnemy>("Hellhound", p, mat, new Vector2(1.6f, 1.0f), 50, S.Hound());
                 h.rageReward = 8;
                 h.transform.SetParent(root, true);
                 h.GetComponentInChildren<SpriteRenderer>().flipX = true; // nhìn về phía người chơi đi tới
             }
 
-            boss = Enemy<DemonKnightBoss>("Boss_DemonKnight", BossSpawn, mat, new Vector2(1.5f, 3.0f), 420, new()
-            {
-                ["idle"] = (Sheet("Enemies/DemonKnight/demon_knight_idle.png"), 5, true),
-            });
+            boss = Enemy<DemonKnightBoss>("Boss_DemonKnight", BossSpawn, mat, new Vector2(1.5f, 3.0f), 420, S.Boss());
             boss.contactDamage = 12;
             boss.GetComponent<Rigidbody2D>().mass = 20f;
             boss.GetComponentInChildren<SpriteRenderer>().flipX = true;
@@ -465,9 +566,10 @@ namespace DevilBlade.EditorTools
                 go.AddComponent<Checkpoint>();
                 var s = new GameObject("Sprite");
                 s.transform.SetParent(go.transform, false);
-                s.transform.localPosition = new Vector3(0, 0.5f, 0);
+                s.transform.localPosition = S.CheckpointOffset;
+                s.transform.localScale = S.CheckpointScale;
                 var sr = s.AddComponent<SpriteRenderer>();
-                sr.sprite = t[23].sprite;
+                sr.sprite = t[S.CheckpointTile].sprite;
                 sr.sharedMaterial = mat;
                 sr.sortingOrder = 3;
             }
@@ -486,7 +588,7 @@ namespace DevilBlade.EditorTools
                 piece.transform.SetParent(gate.transform, false);
                 piece.transform.localPosition = new Vector3(0, i + 0.5f, 0);
                 var sr = piece.AddComponent<SpriteRenderer>();
-                sr.sprite = t[4 + i % 2].sprite;
+                sr.sprite = t[S.Gate[i % S.Gate.Length]].sprite;
                 sr.sharedMaterial = mat;
                 sr.sortingOrder = 4;
             }
