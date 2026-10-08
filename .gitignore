@@ -1,0 +1,12 @@
+# Unity project có .gitignore riêng tại DevilBlade/.gitignore
+
+# asset-pipeline: môi trường Python và ứng viên chưa duyệt (tái tạo được, nặng)
+asset-pipeline/.venv/
+asset-pipeline/out/
+__pycache__/
+*.pyc
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/

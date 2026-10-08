@@ -1,0 +1,63 @@
+﻿# Mô tả các thực thể (nhân vật, quái, đạo cụ, vùng đất).
+# Anchor = ảnh tham chiếu đã duyệt tại refs/<id>.png. Khi file đó tồn tại, MỌI asset của thực thể đó
+# đều gửi kèm anchor cho mô hình để giữ đúng ngoại hình. Đổi mô tả sau khi đã có anchor => phải gen lại anchor.
+
+entities:
+  hero:
+    name: Kael
+    kind: character
+    height_px: 64
+    description: >
+      Lean human warrior in his late twenties, short messy black hair, pale skin with faint crimson vein marks on
+      the left side of his neck and left arm (his demon blood). Wears dark steel-blue plate pauldron on the left
+      shoulder only, charcoal leather coat to the knees, wrapped forearms, heavy boots. Wields a long single-edged
+      steel greatsword with a crimson-wrapped hilt. Determined, stoic expression.
+    voice: { name: Charon, direction: "low, tired but resolute young man" }
+
+  hero_demon:
+    name: Kael (Demon Form)
+    kind: character
+    height_px: 72
+    based_on: hero            # gửi kèm anchor của hero để giữ hình dáng cơ bản
+    description: >
+      The same warrior Kael transformed: skin turned ash-black with glowing ember-orange cracks, two curved horns
+      sweeping back, eyes burning hellfire yellow, coat tattered into smoky crimson wisps, the greatsword now
+      wreathed in crimson flame. Same silhouette and proportions as human form but taller and more hunched.
+    voice: { name: Charon, direction: "same man, distorted, growling, layered with a demonic echo", fx: demon }
+
+  imp:
+    name: Imp
+    kind: enemy
+    height_px: 36
+    description: >
+      Small hunched demon, crimson skin, oversized clawed hands, tiny bat wings, one broken horn, grinning mouth
+      full of needle teeth. Fast skittering melee enemy.
+
+  hellhound:
+    name: Hellhound
+    kind: enemy
+    height_px: 42
+    description: >
+      Gaunt four-legged demon dog, charcoal hide with exposed crimson muscle, ember glowing from its ribs and mouth,
+      long spiked spine. Lunging charge enemy.
+
+  demon_knight:
+    name: Fallen Demon Knight
+    kind: boss
+    height_px: 104
+    description: >
+      Towering armored demon in corroded black-iron plate fused with flesh, purple demonic energy leaking from joints,
+      massive horned helm, carries a huge jagged cleaver and a tattered crimson banner. First boss.
+    voice: { name: Fenrir, direction: "deep, ancient, contemptuous", fx: demon }
+
+zones:
+  ruined_village:
+    description: >
+      Burned human village at dusk, collapsed timber houses, cobblestone streets, broken church bell tower,
+      embers drifting, cold blue night sky with a crimson glow on the horizon.
+    music_mood: melancholic, sparse organ and choir, slow tempo around 80 BPM, sense of loss
+  hell_gate:
+    description: >
+      Cracked black obsidian cliffs, rivers of lava, chained bone bridges, a giant demonic gate carved with runes
+      glowing purple, ash falling.
+    music_mood: aggressive, fast tempo around 150 BPM, pounding taiko and distorted bass, urgent

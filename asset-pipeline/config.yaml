@@ -1,0 +1,26 @@
+﻿# Cấu hình hạ tầng cho pipeline tạo asset. Nội dung nghệ thuật nằm trong bible/, danh sách asset nằm trong manifest.yaml.
+gcp:
+  project: hp-ecommerce-v2
+  image_location: global        # Gemini image + TTS
+  music_location: us-central1   # Lyria chỉ có ở region
+
+models:
+  image: gemini-3-pro-image       # tốt nhất cho việc giữ đồng nhất với ảnh tham chiếu
+  image_draft: gemini-3.1-flash-image   # rẻ, dùng khi --draft
+  tts: gemini-2.5-pro-tts
+  music: lyria-002
+  judge: gemini-2.5-flash          # nghe & chấm ứng viên âm thanh (lệnh review)
+
+# Đường dẫn tương đối với thư mục asset-pipeline/
+paths:
+  unity_project: ../DevilBlade
+  unity_art_root: ../DevilBlade/Assets/Art
+  unity_audio_root: ../DevilBlade/Assets/Audio
+  refs: refs
+  candidates: out/candidates
+  log: logs/generations.jsonl
+
+# Giới hạn chi phí: số lần gọi API tối đa cho một lệnh, phải truyền --yes để vượt.
+budget:
+  max_calls_per_run: 12
+  candidates_default: 2

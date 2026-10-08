@@ -1,0 +1,90 @@
+﻿# ART & AUDIO BIBLE — DevilBlade
+# Nguồn sự thật DUY NHẤT cho phong cách. Mọi prompt đều được ghép từ file này bằng code;
+# không viết prompt tay ngoài pipeline. Đổi file này = đổi phong cách toàn game -> regenerate có chủ đích.
+
+game:
+  title: DevilBlade
+  premise: >
+    A human warrior carrying demon blood fights the demon hordes to protect humanity.
+    When his rage meter fills he transforms into a demon form.
+  tone: grim dark fantasy, gothic, ember-lit ruins, hopeful embers of humanity against a hellish world
+
+art:
+  # Ghép vào ĐẦU mọi prompt ảnh
+  style_prompt: >
+    16-bit era pixel art in the style of a dark fantasy action platformer (think Blasphemous, Castlevania: SotN).
+    Crisp hard-edged pixels on a strict grid, no anti-aliasing, no blur, no gradients, no dithering noise.
+    Limited palette: desaturated cold steel blues and charcoal for humans and stone, deep crimson, ember orange and
+    hellfire yellow reserved for demonic elements. 1-pixel near-black outline (#120d16) around every character and prop.
+    Strong light source from the top-left, cel-shaded with 3 tone steps per material.
+  view: strict side view (2D platformer profile), facing right, orthographic, no perspective
+  # Ghép vào CUỐI mọi prompt ảnh
+  negative_prompt: >
+    no text, no letters, no watermark, no signature, no UI, no frame border, no drop shadow on background,
+    no 3D render, no photorealism, no painterly brush strokes, no soft gradients, no motion blur
+  background_key: "#FF00FF"   # ảnh sprite được tạo trên nền magenta đặc rồi tách nền tự động
+
+  pixel:
+    ppu: 32                     # Pixels Per Unit trong Unity — KHÔNG đổi sau khi đã có asset
+    tile: 32                    # kích thước 1 ô tilemap (px)
+    hero_height: 64             # chiều cao nhân vật chính (px) — các nhân vật khác tỉ lệ theo đây
+    outline: "#120d16"
+
+  # Bảng màu khóa cứng. Mọi sprite được lượng tử hóa về đúng các màu này
+  # => đảm bảo đồng nhất màu tuyệt đối giữa các lần gen.
+  palette:
+    # nền tối / outline — màu ĐẦU TIÊN luôn là màu outline (pipeline ưu tiên giữ màu này khi thu nhỏ)
+    - "#120d16"
+    - "#1f1a24"
+    - "#2e2833"
+    - "#3f3a45"
+    # thép lạnh / đá (loài người, kiến trúc)
+    - "#4b5468"
+    - "#66738a"
+    - "#8794a8"
+    - "#b3bccb"
+    - "#dfe4ea"
+    # xanh đêm / bóng
+    - "#1d2a3c"
+    - "#2c4058"
+    - "#3f5c7a"
+    # da người
+    - "#5e3b32"
+    - "#8c5a45"
+    - "#c08566"
+    - "#e2b394"
+    - "#f2d3b8"
+    # da thuộc / gỗ
+    - "#3a2a22"
+    - "#5c4030"
+    - "#86603f"
+    # máu / quỷ (CHỈ dùng cho yếu tố quỷ & máu)
+    - "#3d0b14"
+    - "#6b1020"
+    - "#9e1a2a"
+    - "#d4283a"
+    # lửa địa ngục / nộ khí
+    - "#a8401c"
+    - "#e0661f"
+    - "#ff9b2f"
+    - "#ffd46b"
+    # năng lượng quỷ tím
+    - "#2a1238"
+    - "#4d1f63"
+    - "#7c3a91"
+    # rêu / chi tiết tự nhiên
+    - "#2d3b2a"
+    - "#4a5e3a"
+
+audio:
+  # Ghép vào mọi prompt Lyria
+  music_style: >
+    dark fantasy gothic score blended with 16-bit chiptune, minor keys (D minor / A minor family),
+    pipe organ, low choir pads, distorted bass, taiko and metal percussion, square-wave lead melodies
+  music_negative: vocals, lyrics, singing, cheerful, major key pop, EDM drops, lo-fi hiss
+  music_target_rms_db: -18       # chuẩn hóa độ lớn (RMS) cho mọi track nhạc
+  voice_target_rms_db: -20
+  sfx_target_peak_db: -3
+  voice:
+    model_note: Gemini TTS, prebuilt voices
+    style_prompt: "Speak in a dark fantasy video game style, dramatic, close-mic, no background music:"
