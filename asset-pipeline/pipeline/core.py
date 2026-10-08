@@ -53,6 +53,16 @@ class Context:
         f = self.refs_dir / f"{entity}.png"
         return f if f.exists() else None
 
+    def concept_refs(self, name, limit=3):
+        """Concept art người dùng đưa vào docs/concepts/<entity|zone|_style>/ (png/jpg/webp), tối đa `limit` ảnh."""
+        d = ROOT.parent / "docs" / "concepts" / name
+        if not d.is_dir() and name.endswith("_hd"):  # hero_hd dùng chung concept với hero
+            d = d.with_name(name[:-3])
+        if not d.is_dir():
+            return []
+        files = sorted(p for p in d.iterdir() if p.suffix.lower() in (".png", ".jpg", ".jpeg", ".webp"))
+        return files[:limit]
+
     def asset(self, asset_id):
         if asset_id not in self.assets:
             raise SystemExit(f"Không có asset '{asset_id}' trong manifest.yaml")

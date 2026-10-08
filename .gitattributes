@@ -22,3 +22,5 @@
 *.ttf      filter=lfs diff=lfs merge=lfs -text
 *.otf      filter=lfs diff=lfs merge=lfs -text
 *.fbx      filter=lfs diff=lfs merge=lfs -text
+*.jpeg     filter=lfs diff=lfs merge=lfs -text
+*.webp     filter=lfs diff=lfs merge=lfs -text

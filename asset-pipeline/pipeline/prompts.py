@@ -30,6 +30,16 @@ def image_job(ctx: Context, a):
         if a["type"] != "anchor" and ctx.entity_ref(a["entity"]):
             refs.append((ctx.entity_ref(a["entity"]), f"character design sheet of {ent['name']} — keep design, colors and proportions identical"))
 
+    # Concept art của người dùng (docs/concepts/) chỉ định hướng thiết kế lúc tạo style tile / anchor / nền;
+    # các asset sau đó bám theo anchor đã duyệt nên vẫn đồng nhất.
+    concept_role = "concept art from the art director — follow its design ideas (silhouette, costume, key features, mood) but render strictly in the game's art style"
+    if a["type"] == "style":
+        refs += [(p, concept_role) for p in ctx.concept_refs("_style")]
+    elif a["type"] == "anchor" and a.get("entity"):
+        refs += [(p, concept_role) for p in ctx.concept_refs(a["entity"])]
+    elif a["type"] == "background" and a.get("zone"):
+        refs += [(p, concept_role) for p in ctx.concept_refs(a["zone"])]
+
     zone = ctx.zones.get(a.get("zone")) if a.get("zone") else None
     parts = [_clean(art["style_prompt"]), _clean(art["view"]) + "."]
     t = a["type"]

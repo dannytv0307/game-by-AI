@@ -79,4 +79,9 @@ Chạy từ thư mục `asset-pipeline/`. Trên Windows, đặt `PYTHONIOENCODIN
 - `settings.json`: quyền dùng chung. Lệnh pipeline đọc/hậu kỳ được tự cho phép; `gen`, `approve` (tốn tiền hoặc ghi đè asset) và `git push` luôn hỏi trước; cấm force push và xóa `generations.jsonl`.
 - `hooks/guard-assets.js`: chặn sửa tay `Assets/Art|ArtHD|Audio`, scene `Level1*.unity`, `Packages/manifest.json`, `refs/*.png` và `generations.jsonl`. Cần Node.js.
 - Skills: `/build-game`, `/run-tests`, `/new-asset`.
+- Quy trình thiết kế → làm game:
+  1. `/story`: bàn cốt truyện → `docs/design/story.md`.
+  2. `/concept <id>`: art concept từng nhân vật/vùng đất (lời mô tả + ảnh trong `docs/concepts/<id>/`) → `docs/design/characters|zones/<id>.md` → `entities.yaml`. Ảnh concept được gửi kèm khi tạo anchor.
+  3. `/roadmap`: roadmap `docs/design/roadmap.md` + task `docs/tasks/backlog.md`.
+  4. `/task` (`/task T-012`, `/task status`): làm từng task, kiểm thử, commit. Dùng skill Unity plugin phù hợp (bảng trong skill `task`).
 - Cấu hình riêng từng máy để ở `.claude/settings.local.json` (đã gitignore).
