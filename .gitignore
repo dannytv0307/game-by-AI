@@ -10,3 +10,6 @@ __pycache__/
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Claude Code: cấu hình cá nhân
+.claude/settings.local.json

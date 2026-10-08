@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "PYTHONIOENCODING": "utf-8"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(.venv/Scripts/python.exe -m pipeline status *)",
+      "Bash(.venv/Scripts/python.exe -m pipeline prompt *)",
+      "Bash(.venv/Scripts/python.exe -m pipeline reprocess *)",
+      "Bash(.venv/Scripts/python.exe -m pipeline sfx *)"
+    ],
+    "ask": [
+      "Bash(.venv/Scripts/python.exe -m pipeline gen *)",
+      "Bash(.venv/Scripts/python.exe -m pipeline approve *)",
+      "Bash(git push *)"
+    ],
+    "deny": [
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Bash(rm *generations.jsonl*)",
+      "Read(asset-pipeline/.venv/**)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard-assets.js\""
+          }
+        ]
+      }
+    ]
+  }
+}

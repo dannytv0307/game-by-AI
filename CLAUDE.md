@@ -73,3 +73,10 @@ Chạy từ thư mục `asset-pipeline/`. Trên Windows, đặt `PYTHONIOENCODIN
 - Khi chạy Editor bằng PowerShell: dùng `Start-Process -PassThru` rồi `$p.WaitForExit()`. Đừng dùng `-Wait`, vì lệnh đó chờ cả tiến trình con (licensing client) nên sẽ treo rất lâu.
 - Cài package qua `Assets/Editor/ProjectBootstrap/PackageInstaller.cs` (C# Client API). Không sửa tay `Packages/manifest.json`.
 - Chạy headless: `"C:\Program Files\Unity\Hub\Editor\6000.3.25f1\Editor\Unity.exe" -batchmode -projectPath DevilBlade -executeMethod <Method> -logFile <log>`. Không truyền `-quit` khi gọi các method bất đồng bộ.
+
+## Cấu hình Claude Code (`.claude/`)
+
+- `settings.json`: quyền dùng chung. Lệnh pipeline đọc/hậu kỳ được tự cho phép; `gen`, `approve` (tốn tiền hoặc ghi đè asset) và `git push` luôn hỏi trước; cấm force push và xóa `generations.jsonl`.
+- `hooks/guard-assets.js`: chặn sửa tay `Assets/Art|ArtHD|Audio`, scene `Level1*.unity`, `Packages/manifest.json`, `refs/*.png` và `generations.jsonl`. Cần Node.js.
+- Skills: `/build-game`, `/run-tests`, `/new-asset`.
+- Cấu hình riêng từng máy để ở `.claude/settings.local.json` (đã gitignore).
