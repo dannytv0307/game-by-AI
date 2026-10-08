@@ -1,11 +1,11 @@
 ---
 name: run-tests
-description: Chạy test PlayMode của DevilBlade (cả Level1 và Level1_HD, gồm bot chạy hết màn) bằng Unity headless, tùy chọn chụp ảnh lúc chơi. Dùng sau khi sửa gameplay, level hoặc asset, hoặc khi người dùng muốn kiểm tra game.
+description: Chạy test PlayMode của DevilBlade (scene Level1, gồm bot chạy hết màn) bằng Unity headless, tùy chọn chụp ảnh lúc chơi. Dùng sau khi sửa gameplay, level hoặc asset, hoặc khi người dùng muốn kiểm tra game.
 ---
 
 # Chạy test PlayMode
 
-Test nằm ở `DevilBlade/Assets/Tests/PlayMode/`, mỗi fixture chạy trên cả `Level1` và `Level1_HD`.
+Test nằm ở `DevilBlade/Assets/Tests/PlayMode/`, fixture chạy trên scene `Level1`.
 Nếu vừa sửa `Level1Builder.cs` thì dựng lại scene trước (`DevilBlade.EditorTools.Level1Builder.BuildHeadless`).
 
 ```powershell
