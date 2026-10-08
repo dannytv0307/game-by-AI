@@ -1,6 +1,6 @@
 ---
 name: build-game
-description: Dựng lại scene Level1 + Level1_HD và build DevilBlade.exe cho Windows bằng Unity headless. Dùng khi người dùng muốn build, xuất bản chơi thử hoặc cập nhật file exe.
+description: Dựng lại scene Level1 (HD) và build DevilBlade.exe cho Windows bằng Unity headless. Dùng khi người dùng muốn build, xuất bản chơi thử hoặc cập nhật file exe.
 ---
 
 # Build DevilBlade cho Windows
