@@ -56,7 +56,7 @@ namespace DevilBlade
             var kb = Keyboard.current;
             if (kb == null) return;
             if (State == Phase.Won && (kb.enterKey.wasPressedThisFrame || kb.rKey.wasPressedThisFrame)) Restart();
-            // Tab: đổi giữa bản Pixel (cảnh 0) và bản HD thử nghiệm (cảnh 1)
+            // Tab: đổi giữa bản HD (cảnh 0) và bản Pixel (cảnh 1)
             if (kb.tabKey.wasPressedThisFrame && SceneManager.sceneCountInBuildSettings > 1)
             {
                 Time.timeScale = 1f;

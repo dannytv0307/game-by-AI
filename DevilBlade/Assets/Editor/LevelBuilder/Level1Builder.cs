@@ -157,7 +157,7 @@ namespace DevilBlade.EditorTools
         const float ArenaTriggerX = 101f;
         static readonly Rect CameraBounds = new(-4, -3, 140, 24);
 
-        /// <summary>Dựng cả hai bản: Level1 (pixel, cảnh 0) và Level1_HD (thử nghiệm HD, cảnh 1). Tab trong game để đổi.</summary>
+        /// <summary>Dựng cả hai bản: Level1_HD (cảnh 0, mở đầu tiên) và Level1 (pixel, cảnh 1). Tab trong game để đổi.</summary>
         [MenuItem("DevilBlade/Build Level 1 (Pixel + HD)")]
         public static void Build()
         {
@@ -165,8 +165,8 @@ namespace DevilBlade.EditorTools
             Build(HD);
             EditorBuildSettings.scenes = new[]
             {
+                new EditorBuildSettingsScene(ScenePathHD, true), // HD mở trước
                 new EditorBuildSettingsScene(ScenePath, true),
-                new EditorBuildSettingsScene(ScenePathHD, true),
             };
             AssetDatabase.SaveAssets();
         }

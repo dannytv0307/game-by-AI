@@ -14,7 +14,7 @@ namespace DevilBlade.EditorTools
         {
             var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {
-                scenes = new[] { Level1Builder.ScenePath, Level1Builder.ScenePathHD }, // Tab trong game để đổi Pixel/HD
+                scenes = new[] { Level1Builder.ScenePathHD, Level1Builder.ScenePath }, // Tab trong game để đổi Pixel/HD
                 locationPathName = WindowsExe,
                 target = BuildTarget.StandaloneWindows64,
                 options = BuildOptions.None,
