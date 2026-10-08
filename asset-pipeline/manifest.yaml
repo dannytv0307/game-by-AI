@@ -155,10 +155,11 @@ assets:
     type: style
     style: hd
     prompt: >
-      A style guide sheet: on the left a dark hooded human swordsman and a horned demon silhouette, in the middle a
-      fragment of ruined gothic stone architecture with a broken arch, on the right a burning candle-lantern and drifting
-      embers, all sharing one consistent desaturated palette and the same cold moonlight rim lighting.
-      Flat near-black background.
+      A style guide sheet: on the left a broad-shouldered ronin demon hunter in a tattered black haori holding a long
+      nodachi, next to a horned oni silhouette with a cracked hannya half-mask; in the middle a fragment of ruined
+      architecture where a gothic stone arch merges with a broken Japanese shrine roof and a fallen torii; on the right a
+      stone lantern with a spectral violet ghost flame and drifting ember-red sparks. All sharing one consistent very dark
+      palette and the same cold violet moonlight rim lighting. Flat near-black background.
 
   - { id: hero_hd_anchor,       type: anchor, style: hd, entity: hero_hd }
   - { id: hero_demon_hd_anchor, type: anchor, style: hd, entity: hero_demon_hd }

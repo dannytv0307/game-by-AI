@@ -4,17 +4,22 @@
 
 art:
   style_prompt: >
-    Dark gothic realistic 2D game art, painterly concept-art realism in the vein of Bloodborne, Dark Souls and
-    Blasphemous 2 key art. Grim, eerie, haunted atmosphere. Chiaroscuro lighting: a single cold moonlight rim light
-    from the upper left, deep crushed shadows, faint volumetric fog. Heavily desaturated palette of charcoal black,
-    ash grey, bone white and cold slate blue; the ONLY saturated colors allowed are dried-blood crimson and, for
-    demonic elements only, smouldering ember red and sickly hellfire glow. Weathered, worn, tattered materials with
-    fine texture detail, sharp clean silhouette readable at small size.
+    Dark fantasy gothic horror 2D game art fused with Japanese folklore, painterly concept-art realism in the vein of
+    Sekiro, Nioh, Bloodborne and Blasphemous key art, with sumi-e ink wash textures: ink-bleed shadow edges,
+    dry-brush strokes on cloth, smoke and ash drawn like ink. Grim, eerie, psychologically unsettling atmosphere where
+    something always feels wrong. Very dark low-key image: most of the form sits in shadow, lit only by a cold
+    violet-tinted moonlight rim light from the upper left; shadows fall into deep indigo and bruised purple, never flat
+    black. Palette of ink black, charcoal with indigo undertone, dark ash grey, deep violet and very dark slate blue,
+    bone white only as tiny accents; shrine lacquer only as faded rust-brown. Saturated colors are reserved:
+    dried-blood crimson and smouldering ember red for blood, rage and Kael's fire; glowing spectral violet for pure
+    demons, spirits and curses. Weathered, tattered materials with fine texture detail, sharp clean silhouette
+    readable at small size.
   view: strict side view profile facing right, orthographic 2D game sprite framing, full body, no perspective distortion
   negative_prompt: >
     no text, no letters, no watermark, no signature, no UI, no frame border, no cast shadow on the background,
     no ground plane, no bright saturated colors, no cartoon, no anime cel shading, no chibi proportions,
-    no pixel art, no clean shiny armor, no heroic smile,
+    no pixel art, no clean shiny armor, no heroic smile, no bright vermilion, no clean anime style, no kawaii,
+    no gore splatter, no bright high-key lighting, no pastel colors,
     no background fog, haze or smoke clouds detached from the character (smoke and embers only clinging to the body)
   background_key: "#00FF00"   # nền xanh lá đặc để tách (đỏ/đen của nhân vật không trùng với xanh lá)
 
@@ -23,4 +28,4 @@ art:
     hero_height: 360           # chiều cao Kael (px) khi xuất sprite, đủ nét ở 1080p
     tile: 256                  # 1 ô tilemap = 256px = 1 unit (PPU 256 cho thư mục Tiles)
     color_words: >
-      charcoal black, ash grey, bone white, cold slate blue, dried-blood crimson, smouldering ember red
+      ink black, indigo charcoal, dark ash grey, deep violet, dried-blood crimson, smouldering ember red, spectral violet

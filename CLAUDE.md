@@ -27,7 +27,7 @@ Mọi asset đồ họa và âm thanh phải đi qua `asset-pipeline/`. Không t
 3. **Đổi mô tả nhân vật hoặc đổi anchor** thì phải tạo lại các asset đã duyệt của nhân vật đó.
 4. **Bảng màu**: mọi sprite được ép về đúng các màu trong `style.yaml > art.palette`. Màu đầu tiên luôn là màu outline. Thêm màu thì thêm vào palette rồi chạy `reprocess`. Không chỉnh tay PNG đầu ra.
 5. **PPU = 32, tile = 32px**: phải khớp với `DevilBladeAssetImporter.cs` (`PixelsPerUnit`, `TileSize`). Không đổi khi đã có asset.
-6. **Màu đỏ, cam, vàng lửa chỉ dùng cho yếu tố quỷ, máu và nộ khí.** Loài người và kiến trúc dùng tông thép lạnh và xám.
+6. **Màu đỏ, cam, vàng lửa và tím sáng chỉ dùng cho yếu tố quỷ, máu, nộ khí và linh hồn** (đỏ: thịnh nộ của Kael; tím sáng: quỷ thuần chủng, yêu thuật). Loài người và kiến trúc dùng tông thép lạnh, xám; bóng tối ngả chàm/tím sẫm. Chi tiết: `docs/design/art_direction.md`.
 7. Mọi lần gọi API được ghi vào `asset-pipeline/logs/generations.jsonl` (prompt, model, hash ảnh tham chiếu). Không xóa file này.
 
 ## Lệnh pipeline
