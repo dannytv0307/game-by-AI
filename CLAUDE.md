@@ -55,5 +55,21 @@ Chạy từ thư mục `asset-pipeline/`. Trên Windows, đặt `PYTHONIOENCODIN
   - Sprite sheet: cắt theo file `*.sheet.json` đi kèm. GUID của sprite cố định, nên gen lại không làm mất tham chiếu.
   - Tileset: cắt theo lưới 32px.
   - Audio: Music dùng streaming, SFX giải nén khi load, Voice nén trong bộ nhớ.
+- **Màn 1 được dựng hoàn toàn bằng code**: `Assets/Editor/LevelBuilder/Level1Builder.cs`.
+  - Bố cục màn chơi (nền đất, platform, quái, checkpoint, boss) nằm trong phần `LEVEL DATA` của file này. Muốn sửa màn thì sửa ở đó rồi dựng lại.
+  - Không sửa tay `Assets/Scenes/Level1.unity`, vì file sẽ bị ghi đè mỗi lần dựng.
+  - Đơn vị: 1 ô = 1 unit = 32px. Nhảy cao tối đa khoảng 3,5 ô, nên chênh lệch độ cao giữa các bậc phải ≤ 3 ô.
+- Gameplay nằm trong `Assets/Scripts/` (asmdef `DevilBlade.Runtime`):
+  - `PlayerController`: di chuyển, chém, nộ khí, hóa quỷ.
+  - `EnemyBase` / `ImpEnemy` / `HellhoundEnemy` / `DemonKnightBoss`.
+  - `GameManager`, `HUD`, `AudioManager`.
+  - Animation dùng `SpriteAnimator` đọc thẳng sprite sheet, không dùng AnimatorController.
+- Test PlayMode ở `Assets/Tests/PlayMode/`, gồm cả bot chạy hết màn để kiểm tra màn đi qua được. `Level1CaptureTests` chụp ảnh lúc chơi vào `DevilBlade/Logs/Screens/`.
+- Các method chạy headless:
+  - `DevilBlade.EditorTools.Level1Builder.BuildHeadless`: dựng lại scene.
+  - `DevilBlade.EditorTools.GameBuild.RebuildAndBuildHeadless`: dựng lại scene và build ra `DevilBlade/Builds/Windows/DevilBlade.exe`.
+  - `DevilBlade.EditorTools.LevelScreenshots.CaptureHeadless`: chụp toàn màn.
+  - Chạy test: `-runTests -testPlatform PlayMode -testResults <file.xml>`.
+- Khi chạy Editor bằng PowerShell: dùng `Start-Process -PassThru` rồi `$p.WaitForExit()`. Đừng dùng `-Wait`, vì lệnh đó chờ cả tiến trình con (licensing client) nên sẽ treo rất lâu.
 - Cài package qua `Assets/Editor/ProjectBootstrap/PackageInstaller.cs` (C# Client API). Không sửa tay `Packages/manifest.json`.
 - Chạy headless: `"C:\Program Files\Unity\Hub\Editor\6000.3.25f1\Editor\Unity.exe" -batchmode -projectPath DevilBlade -executeMethod <Method> -logFile <log>`. Không truyền `-quit` khi gọi các method bất đồng bộ.
